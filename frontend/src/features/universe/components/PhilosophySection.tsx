@@ -139,8 +139,6 @@ export default function PhilosophySection() {
         alignItems: 'center',
         justifyContent: 'center',
         background: 'transparent',
-        backdropFilter: 'blur(2px)',
-        WebkitBackdropFilter: 'blur(2px)',
         overflow: 'hidden',
         perspective: '1000px', // Adds depth for the scaling
       }}
