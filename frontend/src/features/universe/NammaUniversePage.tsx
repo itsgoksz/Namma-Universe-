@@ -82,11 +82,11 @@ export default function NammaUniversePage() {
         {/* Section 2: Philosophy — Cinematic Storytelling (pinned by GSAP) */}
         <PhilosophySection />
 
-        {/* Section 3: The Universe Map — Interactive Constellation */}
-        <UniverseMap />
-
-        {/* Section 4: Product Worlds */}
+        {/* Section 3: Product Worlds */}
         <ProductWorlds activeProductIndexRef={activeProductIndexRef} />
+
+        {/* Section 4: The Universe Map — Interactive Constellation */}
+        <UniverseMap />
 
         {/* Footer */}
         <UniverseFooter />
