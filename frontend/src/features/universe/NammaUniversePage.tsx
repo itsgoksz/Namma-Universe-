@@ -54,7 +54,7 @@ export default function NammaUniversePage() {
   }, []);
 
   return (
-    <div style={{ background: '#05060A', minHeight: '100vh' }}>
+    <div style={{ background: '#05060A', minHeight: '100dvh', overflowX: 'hidden', width: '100%' }}>
       {/* Fixed Three.js Canvas */}
       {webglSupported ? (
         <ParticleField progressRef={progressRef} />

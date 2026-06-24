@@ -33,7 +33,9 @@ export default function AivaProductPage() {
   return (
     <div 
       style={{ 
-        minHeight: '100vh', 
+        minHeight: '100dvh', 
+        width: '100%',
+        overflowX: 'hidden',
         position: 'relative',
         background: 'transparent',
         // Make Aiva's core background slightly translucent so the Universe shines through,
@@ -56,7 +58,7 @@ export default function AivaProductPage() {
           left: 0,
           right: 0,
           zIndex: 50,
-          padding: '1rem 2rem',
+          padding: '1rem max(1rem, 4vw)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
