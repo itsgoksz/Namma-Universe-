@@ -135,20 +135,12 @@ export default function UniverseMap() {
         </p>
       </motion.div>
 
-      {/* Product Grid */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-50px' }}
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: '2.5rem',
-          maxWidth: '1400px',
-          width: '100%',
-        }}
+        className="flex md:flex-wrap md:justify-center overflow-x-auto md:overflow-visible w-full max-w-[1400px] mx-auto gap-4 md:gap-10 px-6 md:px-0 pb-8 md:pb-0 snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       >
         {products.map((product, index) => (
           <motion.div
@@ -162,11 +154,10 @@ export default function UniverseMap() {
             onClick={() => {
               if (product.route !== '#') navigate(product.route);
             }}
+            className={`flex-shrink-0 snap-center w-[160px] md:w-full md:max-w-[340px] min-h-[160px] md:min-h-[260px] flex flex-col justify-center md:justify-between items-center md:items-start ${index % 2 === 1 ? 'md:mt-20' : ''}`}
             style={{
               position: 'relative',
-              width: '100%',
-              maxWidth: '340px',
-              padding: '2.5rem',
+              padding: 'clamp(1.5rem, 3vw, 2.5rem)',
               borderRadius: '24px',
               background: 'rgba(255, 255, 255, 0.01)',
               backdropFilter: 'blur(32px)',
@@ -174,12 +165,7 @@ export default function UniverseMap() {
               border: '1px solid rgba(255, 255, 255, 0.04)',
               cursor: product.route !== '#' ? 'pointer' : 'default',
               overflow: 'hidden',
-              minHeight: '260px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
               transition: 'border-color 0.4s, box-shadow 0.4s, transform 0.4s',
-              marginTop: index % 2 === 1 ? '5rem' : '0', // Creates the staggered floating look
               boxShadow: 'inset 0 0 60px rgba(255, 255, 255, 0.02)',
             }}
             onMouseEnter={(e) => {
@@ -207,29 +193,22 @@ export default function UniverseMap() {
               }}
             />
 
-            <div>
-              <span style={{ fontSize: '2rem', display: 'block', marginBottom: '1rem' }}>
+            <div className="text-center md:text-left flex flex-col items-center md:items-start relative z-10">
+              <span className="text-4xl md:text-5xl block mb-2 md:mb-4">
                 {product.emoji}
               </span>
               <h3
+                className="text-lg md:text-2xl font-semibold mb-1 md:mb-3"
                 style={{
                   fontFamily: "'Space Grotesk', 'Inter', sans-serif",
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
                   color: product.color,
-                  marginBottom: '0.75rem',
                 }}
               >
                 {product.name}
               </h3>
               <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.95rem',
-                  fontWeight: 300,
-                  color: 'rgba(255, 255, 255, 0.55)',
-                  lineHeight: 1.6,
-                }}
+                className="hidden md:block text-[0.95rem] font-light text-white/55 leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {product.tagline}
               </p>
@@ -237,13 +216,10 @@ export default function UniverseMap() {
 
             {product.route !== '#' && (
               <div
+                className="hidden md:block mt-6 text-sm font-medium tracking-wide relative z-10"
                 style={{
-                  marginTop: '1.5rem',
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
                   color: product.color,
-                  letterSpacing: '0.05em',
                 }}
               >
                 Explore →
