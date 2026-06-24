@@ -93,7 +93,7 @@ export default function AivaProductPage() {
             <ArrowLeft size={16} />
             <span
               style={{
-                fontFamily: "'Clash Display', 'Inter', sans-serif",
+                fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                 fontWeight: 600,
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
@@ -124,7 +124,7 @@ export default function AivaProductPage() {
             </div>
             <span
               style={{
-                fontFamily: "'Clash Display', 'Inter', sans-serif",
+                fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                 fontWeight: 600,
                 fontSize: '1rem',
                 color: '#FFFFFF',

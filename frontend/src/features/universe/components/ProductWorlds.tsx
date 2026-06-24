@@ -110,7 +110,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
       >
         <h2
           style={{
-            fontFamily: "'Clash Display', 'Inter', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             fontWeight: 600,
             color: '#FFFFFF',
@@ -248,7 +248,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
                 <h3
                   style={{
-                    fontFamily: "'Clash Display', 'Inter', sans-serif",
+                    fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                     fontSize: '1.75rem',
                     fontWeight: 600,
                     color: world.color,

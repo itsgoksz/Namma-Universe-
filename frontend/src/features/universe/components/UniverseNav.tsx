@@ -47,7 +47,7 @@ export default function UniverseNav() {
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            fontFamily: "'Clash Display', 'Inter', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontSize: '1.1rem',
             fontWeight: 600,
             color: '#FFFFFF',

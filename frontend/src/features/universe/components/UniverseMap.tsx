@@ -112,7 +112,7 @@ export default function UniverseMap() {
       >
         <h2
           style={{
-            fontFamily: "'Clash Display', 'Inter', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             fontWeight: 600,
             color: '#FFFFFF',
@@ -214,7 +214,7 @@ export default function UniverseMap() {
               </span>
               <h3
                 style={{
-                  fontFamily: "'Clash Display', 'Inter', sans-serif",
+                  fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                   fontSize: '1.5rem',
                   fontWeight: 600,
                   color: product.color,

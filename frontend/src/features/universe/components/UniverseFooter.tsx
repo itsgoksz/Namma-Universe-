@@ -28,7 +28,7 @@ export default function UniverseFooter() {
         {/* Wordmark */}
         <div
           style={{
-            fontFamily: "'Clash Display', 'Inter', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontSize: '1rem',
             fontWeight: 600,
             color: 'rgba(255, 255, 255, 0.3)',

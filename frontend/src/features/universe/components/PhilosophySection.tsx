@@ -172,7 +172,7 @@ export default function PhilosophySection() {
         >
           <h2
             style={{
-              fontFamily: "'Clash Display', 'Inter', sans-serif",
+              fontFamily: "'Space Grotesk', 'Inter', sans-serif",
               fontSize: 'clamp(3rem, 8vw, 7rem)', // Massive typography
               fontWeight: 600,
               color: slide.color,

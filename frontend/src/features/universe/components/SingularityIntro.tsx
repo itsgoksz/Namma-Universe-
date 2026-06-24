@@ -55,7 +55,7 @@ export default function SingularityIntro() {
             opacity: logoOpacity,
             y: logoY,
             scale: logoScale,
-            fontFamily: "'Clash Display', 'Inter', sans-serif",
+            fontFamily: "'Space Grotesk', 'Inter', sans-serif",
             fontSize: 'clamp(2.5rem, 8vw, 7rem)',
             fontWeight: 600,
             letterSpacing: '-0.03em',
