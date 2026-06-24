@@ -46,11 +46,40 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
   const handleSubmit = async () => {
     if (!selectedDate || !selectedTime) return;
     setIsSubmitting(true);
-    // Simulate network request to send data to Aiva
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Demo booked successfully:', { ...formData, date: selectedDate, time: selectedTime });
-    setIsSubmitting(false);
-    setStep('success');
+    
+    try {
+      // Send the lead directly to your email using Web3Forms
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          // Replace this with your Web3Forms Access Key
+          access_key: "YOUR_ACCESS_KEY_HERE",
+          subject: "New Demo Booking: Aiva",
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          date_selected: selectedDate,
+          time_selected: selectedTime,
+        }),
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setStep('success');
+      } else {
+        console.error(result);
+        alert("Failed to send demo request. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong. Please check your internet connection.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
