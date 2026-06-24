@@ -175,9 +175,9 @@ export default function LoginPage() {
             {/* Footer link */}
             <p className="mt-8 text-center text-[13px] font-medium text-white/30 relative z-10">
               Don't have an account?{' '}
-              <Link to="/register" className="text-[#A66B8E] font-bold hover:underline underline-offset-2">
-                Get started
-              </Link>
+              <a href="/#demo" className="text-[#A66B8E] font-bold hover:underline underline-offset-2">
+                Book demo and get started
+              </a>
             </p>
           </div>
 

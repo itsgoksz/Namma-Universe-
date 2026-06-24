@@ -28,6 +28,12 @@ export default function AivaProductPage() {
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    // Check if the URL has #demo hash to auto-open the modal
+    if (window.location.hash === '#demo') {
+      setIsDemoModalOpen(true);
+      // Clean up the hash so it doesn't reopen if they refresh
+      window.history.replaceState(null, '', window.location.pathname);
+    }
   }, []);
 
   return (
