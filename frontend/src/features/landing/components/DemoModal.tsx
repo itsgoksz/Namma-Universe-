@@ -46,7 +46,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
   const handleSubmit = async () => {
     if (!selectedDate || !selectedTime) return;
     setIsSubmitting(true);
-    
+
     try {
       // Send the lead directly to your email using Web3Forms
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -57,7 +57,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
         },
         body: JSON.stringify({
           // Replace this with your Web3Forms Access Key
-          access_key: "YOUR_ACCESS_KEY_HERE",
+          access_key: "fd261ad2-ead6-4ebd-a330-5538a35906d5",
           subject: "New Demo Booking: Aiva",
           name: formData.name,
           email: formData.email,
@@ -66,7 +66,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
           time_selected: selectedTime,
         }),
       });
-      
+
       const result = await response.json();
       if (result.success) {
         setStep('success');
@@ -93,7 +93,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={handleClose}
           />
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
             >
               <X className="w-5 h-5" style={{ color: 'var(--color-text-secondary)' }} />
             </button>
-            
+
             <AnimatePresence mode="wait">
               {step === 'details' && (
                 <motion.div
@@ -120,43 +120,43 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                   <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
                     See how Aiva can transform your business. Let's start with your details.
                   </p>
-                  
+
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Name</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        placeholder="John Doe" 
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="John Doe"
                         className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }} 
+                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
                       />
                     </div>
                     <div>
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Email</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        placeholder="john@example.com" 
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="john@example.com"
                         className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }} 
+                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
                       />
                     </div>
                     <div>
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Phone Number</label>
-                      <input 
-                        type="tel" 
+                      <input
+                        type="tel"
                         value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        placeholder="+1 (555) 000-0000" 
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+1 (555) 000-0000"
                         className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }} 
+                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
                       />
                     </div>
-                    
-                    <button 
+
+                    <button
                       disabled={!formData.name || !formData.email || !formData.phone}
                       className="w-full py-3 mt-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
                       style={{ backgroundColor: 'var(--color-accent)' }}
@@ -179,7 +179,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                   <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
                     When works best for you, {formData.name.split(' ')[0]}?
                   </p>
-                  
+
                   <div className="space-y-6">
                     {/* Date Selector */}
                     <div>
@@ -193,7 +193,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                             key={d.full}
                             onClick={() => setSelectedDate(d.full)}
                             className={`flex flex-col items-center justify-center min-w-[4rem] py-3 rounded-xl border transition-all ${selectedDate === d.full ? 'border-[var(--color-accent)]' : 'border-[var(--color-border)] hover:border-white/20'}`}
-                            style={{ 
+                            style={{
                               backgroundColor: selectedDate === d.full ? 'var(--color-accent-subtle)' : 'var(--color-bg-secondary)',
                             }}
                           >
@@ -221,7 +221,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                                 key={t}
                                 onClick={() => setSelectedTime(t)}
                                 className={`py-2 px-4 rounded-lg border text-sm font-medium transition-all ${selectedTime === t ? 'border-[var(--color-accent)] text-[var(--color-accent)]' : 'border-[var(--color-border)] hover:border-white/20'}`}
-                                style={{ 
+                                style={{
                                   backgroundColor: selectedTime === t ? 'var(--color-accent-subtle)' : 'var(--color-bg-secondary)',
                                   color: selectedTime === t ? 'var(--color-accent)' : 'var(--color-text-primary)'
                                 }}
@@ -235,13 +235,13 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                     </AnimatePresence>
 
                     <div className="pt-4 flex gap-3">
-                      <button 
+                      <button
                         className="px-6 py-3 rounded-xl font-semibold transition-all hover:bg-white/5 border border-[var(--color-border)]"
                         onClick={() => setStep('details')}
                       >
                         Back
                       </button>
-                      <button 
+                      <button
                         disabled={!selectedDate || !selectedTime || isSubmitting}
                         className="flex-1 py-3 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-2"
                         style={{ backgroundColor: 'var(--color-accent)' }}
@@ -272,7 +272,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                   <p className="mb-8" style={{ color: 'var(--color-text-secondary)' }}>
                     Thanks, {formData.name.split(' ')[0]}. We've sent a calendar invite to {formData.email}. We look forward to showing you Aiva!
                   </p>
-                  <button 
+                  <button
                     className="w-full py-3 rounded-xl font-semibold text-white transition-all hover:bg-white/10 border border-[var(--color-border)]"
                     onClick={handleClose}
                   >
