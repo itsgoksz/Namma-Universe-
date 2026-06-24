@@ -9,7 +9,7 @@ const industries = [
   {
     name: "Clinics",
     description: "Handle patient queries with empathy, schedule consultations, and provide post-care instructions securely.",
-    image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?auto=format&fit=crop&q=80&w=800"
+    image: "/clinic-reception.png"
   },
   {
     name: "Gyms & Studios",

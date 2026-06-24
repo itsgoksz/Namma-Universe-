@@ -121,11 +121,20 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                     See how Aiva can transform your business. Let's start with your details.
                   </p>
 
-                  <div className="space-y-4">
+                  <form 
+                    className="space-y-4"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      setStep('calendar');
+                    }}
+                  >
                     <div>
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Name</label>
                       <input
                         type="text"
+                        required
+                        pattern="[A-Za-z\s\-]{2,}"
+                        title="Please enter a valid name (minimum 2 characters)"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="John Doe"
@@ -137,6 +146,7 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Email</label>
                       <input
                         type="email"
+                        required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="john@example.com"
@@ -148,6 +158,9 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Phone Number</label>
                       <input
                         type="tel"
+                        required
+                        pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}"
+                        title="Please enter a valid phone number (e.g. +1 555-000-0000)"
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+1 (555) 000-0000"
@@ -157,14 +170,14 @@ export default function DemoModal({ isOpen, onClose }: DemoModalProps) {
                     </div>
 
                     <button
+                      type="submit"
                       disabled={!formData.name || !formData.email || !formData.phone}
                       className="w-full py-3 mt-4 rounded-xl font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100"
                       style={{ backgroundColor: 'var(--color-accent)' }}
-                      onClick={() => setStep('calendar')}
                     >
                       Next: Choose a Time
                     </button>
-                  </div>
+                  </form>
                 </motion.div>
               )}
 
