@@ -103,9 +103,24 @@ const vertexShader = /* glsl */ `
       finalPos.z = sin(currentAngle) * radius;
     }
 
-    // Interpolate through phases
+    // ── Interpolate through phases ──
     vec3 pos = mix(singularityPos, rotatedExpandedPos, expansion);
-    pos = mix(pos, finalPos, settlement);
+    
+    // ── WARP TUNNEL EFFECT ──
+    // Instead of a flat chaotic scatter, we force the galaxy dust to burst radially OUTWARD
+    // and FORWARD (past the camera), clearing the center for the Solar System to assemble.
+    float warpArc = settlement * (1.0 - settlement); // Parabolic arc peaking at mid-transition
+    vec2 dir = normalize(pos.xy + vec2(0.0001));
+    
+    float isDust = 1.0 - isProductNode;
+    vec3 warpedPos = pos;
+    
+    // Massive radial burst outward for dust
+    warpedPos.xy += dir * (warpArc * 80.0 * isDust);
+    // Massive forward burst (Z goes positive) so dust flies past the camera
+    warpedPos.z += warpArc * 60.0 * isDust;
+    
+    pos = mix(warpedPos, finalPos, settlement);
 
     // Gentle floating in final state
     float floatStrength = settlement * 0.15;
