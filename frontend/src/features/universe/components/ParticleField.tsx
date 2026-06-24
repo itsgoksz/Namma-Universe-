@@ -17,14 +17,21 @@ import * as THREE from 'three';
 
 const PARTICLE_COUNT = 15000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
 
-// Solar System Planets assigned to Products
+// Solar System Planets: 8 planets to maintain the full visual scale of the universe
+// We assign specific ones to our products below
 const PRODUCT_NODES = [
-  { radius: 2.0, startAngle: Math.random() * Math.PI * 2, speed: 0.80, color: [0.8, 0.2, 0.6], size: 2.5 }, // Aiva (Venus / Pink)
-  { radius: 3.5, startAngle: Math.random() * Math.PI * 2, speed: 0.60, color: [0.2, 0.8, 0.4], size: 2.0 }, // Wellora (Earth / Green)
-  { radius: 5.0, startAngle: Math.random() * Math.PI * 2, speed: 0.40, color: [0.1, 0.4, 0.9], size: 2.2 }, // Echo (Neptune / Blue)
-  { radius: 6.8, startAngle: Math.random() * Math.PI * 2, speed: 0.25, color: [0.9, 0.7, 0.2], size: 4.0 }, // Homie (Jupiter / Amber)
-  { radius: 8.5, startAngle: Math.random() * Math.PI * 2, speed: 0.15, color: [0.5, 0.2, 0.9], size: 3.0 }, // EV Copilot (Uranus / Purple)
+  { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 1.60, color: [0.44, 0.50, 0.56], size: 1.2 }, // 0: Mercury
+  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 1.10, color: [0.8, 0.2, 0.6], size: 2.5 },  // 1: Venus (Aiva - Pink)
+  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.80, color: [0.2, 0.8, 0.4], size: 2.0 },  // 2: Earth (Wellora - Green)
+  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.50, color: [0.88, 0.44, 0.22], size: 1.5 }, // 3: Mars
+  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.25, color: [0.9, 0.7, 0.2], size: 4.0 },  // 4: Jupiter (Homie - Amber)
+  { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.15, color: [0.93, 0.86, 0.51], size: 4.0 }, // 5: Saturn
+  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.10, color: [0.5, 0.2, 0.9], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
+  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.1, 0.4, 0.9], size: 2.2 }, // 7: Neptune (Echo - Blue)
 ];
+
+// Map Product Index (0-4) to Planet Index in PRODUCT_NODES
+const productToPlanetMap = [1, 2, 7, 4, 6];
 
 // ─── GLSL Shaders ────────────────────────────────────────────
 
@@ -473,8 +480,8 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
     let targetPos = new THREE.Vector3(0, 0, baseZ);
     let targetLook = new THREE.Vector3(0, 0, 0);
 
-    if (activeProductIndexRef && activeProductIndexRef.current !== null && activeProductIndexRef.current >= 0 && activeProductIndexRef.current < PRODUCT_NODES.length) {
-      const p = PRODUCT_NODES[activeProductIndexRef.current];
+    if (activeProductIndexRef && activeProductIndexRef.current !== null && activeProductIndexRef.current >= 0 && activeProductIndexRef.current < productToPlanetMap.length) {
+      const p = PRODUCT_NODES[productToPlanetMap[activeProductIndexRef.current]];
       
       const currentAngle = p.startAngle + clock.elapsedTime * p.speed;
       const px = Math.cos(currentAngle) * p.radius;
