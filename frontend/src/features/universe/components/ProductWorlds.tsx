@@ -148,9 +148,9 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
             transition={{ duration: 0.8, delay: 0.1 }}
             whileHover={world.available ? { scale: 1.01, y: -2 } : {}}
             onClick={() => { if (world.available) navigate(world.route); }}
+            className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-between text-center md:text-left relative overflow-hidden`}
             style={{
-              position: 'relative',
-              padding: '6rem 4rem',
+              padding: 'clamp(2.5rem, 5vw, 6rem) clamp(1.5rem, 4vw, 4rem)',
               minHeight: '65vh', // Massive panels
               borderRadius: '40px',
               background: 'rgba(5, 6, 10, 0.45)', // Deep glass
@@ -159,12 +159,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
               border: '1px solid rgba(255, 255, 255, 0.04)',
               boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.01), 0 40px 100px rgba(0, 0, 0, 0.5)',
               cursor: world.available ? 'pointer' : 'default',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: index % 2 === 0 ? 'row' : 'row-reverse',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '6rem',
+              gap: 'clamp(3rem, 6vw, 6rem)',
               transition: 'border-color 0.5s',
             }}
             onMouseEnter={(e) => {
@@ -245,7 +240,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
 
             {/* Text */}
             <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
                 <h3
                   style={{
                     fontFamily: "'Space Grotesk', 'Inter', sans-serif",
