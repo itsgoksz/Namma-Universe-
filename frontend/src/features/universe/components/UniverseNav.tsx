@@ -88,31 +88,6 @@ export default function UniverseNav() {
           >
             Philosophy
           </a>
-          <Link
-            to="/login"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize: '0.85rem',
-              fontWeight: 500,
-              color: '#FFFFFF',
-              textDecoration: 'none',
-              padding: '0.5rem 1.25rem',
-              borderRadius: '8px',
-              border: '1px solid rgba(109, 94, 247, 0.4)',
-              background: 'rgba(109, 94, 247, 0.1)',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(109, 94, 247, 0.25)';
-              e.currentTarget.style.borderColor = 'rgba(109, 94, 247, 0.7)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(109, 94, 247, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(109, 94, 247, 0.4)';
-            }}
-          >
-            Sign in
-          </Link>
         </div>
       </div>
     </motion.nav>
