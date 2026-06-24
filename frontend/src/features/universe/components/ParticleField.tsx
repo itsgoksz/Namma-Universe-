@@ -497,7 +497,7 @@ export default function ParticleField({ progressRef, className }: ParticleFieldP
       
       <Canvas
         camera={{ position: [0, 0, 20], fov: 65, near: 0.1, far: 150 }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         gl={{
           antialias: false,
           alpha: true,
