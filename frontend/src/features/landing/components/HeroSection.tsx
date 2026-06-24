@@ -1,0 +1,121 @@
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Sparkles, PhoneCall, CalendarCheck, MessageSquare } from 'lucide-react';
+
+interface HeroSectionProps {
+  onOpenDemo: () => void;
+}
+
+export default function HeroSection({ onOpenDemo }: HeroSectionProps) {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
+      {/* Background gradients */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full blur-[120px]" style={{ background: 'var(--color-accent-light)' }} />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full blur-[150px]" style={{ background: 'var(--color-accent-subtle)' }} />
+      </div>
+
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass border border-[var(--color-border)]" style={{ background: 'rgba(255, 255, 255, 0.03)' }}>
+                <Sparkles className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
+                <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Aiva AI Receptionist 2.0</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
+                Never Miss a <br />
+                <span className="text-gradient">Customer Again.</span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto lg:mx-0 font-light" style={{ color: 'var(--color-text-secondary)' }}>
+                Aiva automatically answers calls, handles WhatsApp enquiries, books appointments, and follows up—so you can focus on running your business.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                <button
+                  onClick={onOpenDemo}
+                  className="px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto text-white"
+                  style={{ backgroundColor: 'var(--color-accent)', boxShadow: 'var(--shadow-premium)' }}
+                >
+                  Book a Demo
+                </button>
+                <button
+                  onClick={onOpenDemo}
+                  className="px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:bg-[rgba(255,255,255,0.05)] w-full sm:w-auto border"
+                  style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
+                >
+                  Watch Aiva in Action
+                </button>
+              </div>
+            </motion.div>
+          </div>
+          
+          <div className="w-full lg:w-1/2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, x: 20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+              className="relative w-full max-w-lg mx-auto"
+            >
+              {/* Abstract Dashboard Mockup */}
+              <div className="glass rounded-2xl border border-[var(--color-border)] p-6 overflow-hidden relative shadow-2xl" style={{ background: 'var(--color-bg-tertiary)' }}>
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)]" style={{ background: 'var(--color-bg-secondary)' }}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'var(--color-success-light)', color: 'var(--color-success)' }}>
+                        <PhoneCall className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-medium">Call answered</p>
+                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>"Do you have availability today?"</p>
+                      </div>
+                    </div>
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>Just now</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)]" style={{ background: 'var(--color-bg-secondary)' }}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'var(--color-accent-light)', color: 'var(--color-accent)' }}>
+                        <CalendarCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-medium">Appointment booked</p>
+                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Hair Spa for Men • 3:00 PM</p>
+                      </div>
+                    </div>
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>2m ago</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)]" style={{ background: 'var(--color-bg-secondary)' }}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'var(--color-info-light)', color: 'var(--color-info)' }}>
+                        <MessageSquare className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-medium">WhatsApp enquiry</p>
+                        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Pricing information sent</p>
+                      </div>
+                    </div>
+                    <span className="text-xs" style={{ color: 'var(--color-text-tertiary)' }}>5m ago</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
