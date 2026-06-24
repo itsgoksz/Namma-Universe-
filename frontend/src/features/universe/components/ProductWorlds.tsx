@@ -89,7 +89,7 @@ const worlds: ProductWorld[] = [
   },
 ];
 
-export default function ProductWorlds() {
+export default function ProductWorlds({ activeProductIndexRef }: { activeProductIndexRef?: React.MutableRefObject<number | null> }) {
   const navigate = useNavigate();
 
   return (
@@ -137,6 +137,14 @@ export default function ProductWorlds() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
+            onViewportEnter={() => {
+              if (activeProductIndexRef) activeProductIndexRef.current = index;
+            }}
+            onViewportLeave={() => {
+              if (activeProductIndexRef && activeProductIndexRef.current === index) {
+                activeProductIndexRef.current = null;
+              }
+            }}
             transition={{ duration: 0.8, delay: 0.1 }}
             whileHover={world.available ? { scale: 1.01, y: -2 } : {}}
             onClick={() => { if (world.available) navigate(world.route); }}

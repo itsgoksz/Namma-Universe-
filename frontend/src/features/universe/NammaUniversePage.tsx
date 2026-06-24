@@ -22,6 +22,7 @@ import UniverseFooter from './components/UniverseFooter';
 
 export default function NammaUniversePage() {
   const progressRef = useRef(0);
+  const activeProductIndexRef = useRef<number | null>(null);
   const [webglSupported, setWebglSupported] = useState(true);
 
   // Check WebGL support
@@ -57,7 +58,7 @@ export default function NammaUniversePage() {
     <div style={{ background: '#05060A', minHeight: '100dvh', overflowX: 'hidden', width: '100%' }}>
       {/* Fixed Three.js Canvas */}
       {webglSupported ? (
-        <ParticleField progressRef={progressRef} />
+        <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
       ) : (
         /* CSS fallback for non-WebGL devices */
         <div
@@ -85,7 +86,7 @@ export default function NammaUniversePage() {
         <UniverseMap />
 
         {/* Section 4: Product Worlds */}
-        <ProductWorlds />
+        <ProductWorlds activeProductIndexRef={activeProductIndexRef} />
 
         {/* Footer */}
         <UniverseFooter />

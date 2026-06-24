@@ -17,16 +17,13 @@ import * as THREE from 'three';
 
 const PARTICLE_COUNT = 15000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
 
-// Solar System Planets: Accurate colors, relative sizes, and orbital speeds
+// Solar System Planets assigned to Products
 const PRODUCT_NODES = [
-  { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 1.60, color: [0.44, 0.50, 0.56], size: 1.2 }, // Mercury: Slate gray
-  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 1.10, color: [0.95, 0.92, 0.84], size: 1.8 }, // Venus: Pearly white/yellow
-  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.80, color: [0.17, 0.45, 0.95], size: 2.0 }, // Earth: Vibrant blue
-  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.50, color: [0.88, 0.44, 0.22], size: 1.5 }, // Mars: Dusky red/butterscotch
-  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.25, color: [0.85, 0.65, 0.45], size: 4.8 }, // Jupiter: Swirling yellow/brown
-  { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.15, color: [0.93, 0.86, 0.51], size: 4.0 }, // Saturn: Pale yellow/gold
-  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.10, color: [0.67, 0.91, 0.91], size: 3.0 }, // Uranus: Cyan/light blue-green
-  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.15, 0.35, 0.75], size: 2.8 },// Neptune: Deep, opaque blue
+  { radius: 2.0, startAngle: Math.random() * Math.PI * 2, speed: 0.80, color: [0.8, 0.2, 0.6], size: 2.5 }, // Aiva (Venus / Pink)
+  { radius: 3.5, startAngle: Math.random() * Math.PI * 2, speed: 0.60, color: [0.2, 0.8, 0.4], size: 2.0 }, // Wellora (Earth / Green)
+  { radius: 5.0, startAngle: Math.random() * Math.PI * 2, speed: 0.40, color: [0.1, 0.4, 0.9], size: 2.2 }, // Echo (Neptune / Blue)
+  { radius: 6.8, startAngle: Math.random() * Math.PI * 2, speed: 0.25, color: [0.9, 0.7, 0.2], size: 4.0 }, // Homie (Jupiter / Amber)
+  { radius: 8.5, startAngle: Math.random() * Math.PI * 2, speed: 0.15, color: [0.5, 0.2, 0.9], size: 3.0 }, // EV Copilot (Uranus / Purple)
 ];
 
 // ─── GLSL Shaders ────────────────────────────────────────────
@@ -440,35 +437,75 @@ function SolarSystemRings({ progressRef, mouseRef }: ParticlesProps) {
   );
 }
 
-// ─── Camera Controller ─────────────────────────────────────────
 import { useThree } from '@react-three/fiber';
 
-function CameraController({ progressRef }: { progressRef: MutableRefObject<number> }) {
-  const { camera } = useThree();
-  const initialZoom = useRef(25); // Start far out in deep space
-  const smoothZ = useRef(25);
+interface CameraControllerProps {
+  progressRef: MutableRefObject<number>;
+  activeProductIndexRef?: React.MutableRefObject<number | null>;
+  mouseRef: MutableRefObject<{ x: number, y: number }>;
+}
 
-  useFrame((_, delta) => {
-    // Initial warp-in from z=25 to base z=10.0 (safely outside the Solar System)
+function CameraController({ progressRef, activeProductIndexRef, mouseRef }: CameraControllerProps) {
+  const { camera } = useThree();
+  const initialZoom = useRef(25);
+  
+  const smoothProgress = useRef(0);
+  const smoothMouse = useRef({ x: 0, y: 0 });
+  const smoothTarget = useRef(new THREE.Vector3(0, 0, 25));
+  const smoothLookAt = useRef(new THREE.Vector3(0, 0, 0));
+
+  useFrame(({ clock }, delta) => {
+    // Sync shared smoothing variables
+    smoothProgress.current += (progressRef.current - smoothProgress.current) * (1 - Math.exp(-6 * delta));
+    smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
+    smoothMouse.current.y += (mouseRef.current.y - smoothMouse.current.y) * (1 - Math.exp(-4 * delta));
+
     initialZoom.current += (10.0 - initialZoom.current) * (1 - Math.exp(-2.0 * delta));
     
     const scrollY = window.scrollY;
     const vh = window.innerHeight;
-    
-    // "Loop of our universe": Cap the forward movement so we STOP in front of the Solar System
-    // and just observe it spinning/looping. This prevents flying perfectly into the mathematical center
-    // of particles and crashing the graphics card.
-    const maxScroll = 4.0; // Stop moving forward after Intro
+    const maxScroll = 4.0;
     const effectiveScroll = Math.min(scrollY / vh, maxScroll);
     const scrollForward = effectiveScroll * 0.8;
     
-    // Target Z stops perfectly at 10.0 - 3.2 = 6.8. 
-    // This keeps the Sun exactly in the center, and planets orbiting perfectly in view.
-    const targetZ = initialZoom.current - scrollForward;
+    const baseZ = initialZoom.current - scrollForward;
     
-    // Smoothly interpolate the camera's Z position
-    smoothZ.current += (targetZ - smoothZ.current) * (1 - Math.exp(-5.0 * delta));
-    camera.position.z = smoothZ.current;
+    let targetPos = new THREE.Vector3(0, 0, baseZ);
+    let targetLook = new THREE.Vector3(0, 0, 0);
+
+    if (activeProductIndexRef && activeProductIndexRef.current !== null && activeProductIndexRef.current >= 0 && activeProductIndexRef.current < PRODUCT_NODES.length) {
+      const p = PRODUCT_NODES[activeProductIndexRef.current];
+      
+      const currentAngle = p.startAngle + clock.elapsedTime * p.speed;
+      const px = Math.cos(currentAngle) * p.radius;
+      const py = Math.sin(currentAngle) * p.radius * 0.15;
+      const pz = Math.sin(currentAngle) * p.radius;
+      
+      const pos = new THREE.Vector3(px, py, pz);
+      
+      // Apply the same global scene rotation to accurately find the planet's world coordinates
+      const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
+      const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+      const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
+      const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
+      
+      const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
+      pos.applyEuler(euler);
+      
+      // Look directly at the planet
+      targetLook.copy(pos);
+      
+      // Position camera slightly offset (in screen space) so the planet appears behind the card
+      const offset = new THREE.Vector3(0, 0.5, 3.0);
+      targetPos.copy(pos).add(offset);
+    }
+
+    // Smoothly interpolate camera
+    smoothTarget.current.lerp(targetPos, 1 - Math.exp(-3.0 * delta));
+    smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-4.0 * delta));
+
+    camera.position.copy(smoothTarget.current);
+    camera.lookAt(smoothLookAt.current);
   });
 
   return null;
@@ -478,10 +515,11 @@ function CameraController({ progressRef }: { progressRef: MutableRefObject<numbe
 
 interface ParticleFieldProps {
   progressRef: MutableRefObject<number>;
+  activeProductIndexRef?: React.MutableRefObject<number | null>;
   className?: string;
 }
 
-export default function ParticleField({ progressRef, className }: ParticleFieldProps) {
+export default function ParticleField({ progressRef, activeProductIndexRef, className }: ParticleFieldProps) {
   const mouseRef = useRef({ x: 0, y: 0 });
 
   // Track mouse for parallax effect
@@ -523,7 +561,7 @@ export default function ParticleField({ progressRef, className }: ParticleFieldP
         {/* Subtle global fog to fade out distant particles */}
         <fog attach="fog" args={['#05060A', 3, 25]} />
         
-        <CameraController progressRef={progressRef} />
+        <CameraController progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} mouseRef={mouseRef} />
         <Particles progressRef={progressRef} mouseRef={mouseRef} />
         <SolarSystemRings progressRef={progressRef} mouseRef={mouseRef} />
       </Canvas>
