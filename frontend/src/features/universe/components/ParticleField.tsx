@@ -372,7 +372,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
 
   return (
     <group ref={groupRef}>
-      <points geometry={geometry as any}>
+      <points frustumCulled={false} geometry={geometry as any}>
         <shaderMaterial
           ref={materialRef}
           vertexShader={vertexShader}
