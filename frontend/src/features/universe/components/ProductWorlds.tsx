@@ -94,6 +94,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
 
   return (
     <section
+      id="products"
       style={{
         position: 'relative',
         zIndex: 20,

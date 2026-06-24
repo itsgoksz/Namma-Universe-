@@ -90,7 +90,6 @@ export default function UniverseMap() {
 
   return (
     <section
-      id="products"
       style={{
         position: 'relative',
         zIndex: 10,
