@@ -44,6 +44,9 @@ export default function UniverseNav() {
         <Link
           to="/"
           style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
             fontFamily: "'Clash Display', 'Inter', sans-serif",
             fontSize: '1.1rem',
             fontWeight: 600,
@@ -53,6 +56,16 @@ export default function UniverseNav() {
             textTransform: 'uppercase',
           }}
         >
+          <img 
+            src="/logo.png" 
+            alt="Namma Universe" 
+            style={{ 
+              width: '28px', 
+              height: '28px', 
+              borderRadius: '6px',
+              objectFit: 'cover'
+            }} 
+          />
           Namma Universe
         </Link>
 
