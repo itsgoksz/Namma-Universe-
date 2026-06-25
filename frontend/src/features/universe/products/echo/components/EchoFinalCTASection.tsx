@@ -1,6 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 
-export default function EchoFinalCTASection() {
+interface EchoFinalCTASectionProps {
+  onOpenDemo: () => void;
+}
+
+export default function EchoFinalCTASection({ onOpenDemo }: EchoFinalCTASectionProps) {
   return (
     <section className="py-32 relative overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[150px] pointer-events-none opacity-20" style={{ background: 'var(--color-accent)' }}></div>
@@ -15,10 +19,11 @@ export default function EchoFinalCTASection() {
         </p>
         
         <button
+          onClick={onOpenDemo}
           className="inline-flex items-center gap-3 px-8 py-5 rounded-2xl font-bold text-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-[#120B0F] shadow-2xl"
           style={{ backgroundColor: 'var(--color-accent)' }}
         >
-          Enter Echo's World
+          Book a Demo
           <ArrowRight className="w-6 h-6" />
         </button>
       </div>

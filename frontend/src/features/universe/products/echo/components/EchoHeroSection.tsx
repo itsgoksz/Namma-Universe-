@@ -1,7 +1,11 @@
 import { motion } from 'framer-motion';
 import { CloudRain, Droplets, Leaf } from 'lucide-react';
 
-export default function EchoHeroSection() {
+interface EchoHeroSectionProps {
+  onOpenDemo: () => void;
+}
+
+export default function EchoHeroSection({ onOpenDemo }: EchoHeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
       {/* Background gradients */}
@@ -34,10 +38,11 @@ export default function EchoHeroSection() {
               
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <button
+                  onClick={onOpenDemo}
                   className="px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto text-[#120B0F]"
                   style={{ backgroundColor: 'var(--color-accent)', boxShadow: 'var(--shadow-premium)' }}
                 >
-                  Enter World
+                  Book a Demo
                 </button>
               </div>
             </motion.div>

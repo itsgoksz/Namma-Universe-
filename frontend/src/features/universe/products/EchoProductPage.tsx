@@ -14,10 +14,12 @@ import EchoInterfaces from './echo/components/EchoInterfaces';
 import EchoArchitecture from './echo/components/EchoArchitecture';
 import EchoSecuritySection from './echo/components/EchoSecuritySection';
 import EchoFinalCTASection from './echo/components/EchoFinalCTASection';
+import EchoDemoModal from './echo/components/EchoDemoModal';
 import Footer from '../../landing/components/Footer';
 import ParticleField from '../components/ParticleField';
 
 export default function EchoProductPage() {
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const progressRef = useRef(1); // Set to 1 to show the fully formed Constellation/Solar System
 
   // Scroll to top on mount
@@ -128,36 +130,41 @@ export default function EchoProductPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <Link
-              to="/login"
+            <button
+              onClick={() => setIsDemoModalOpen(true)}
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.85rem',
-                fontWeight: 400,
-                color: 'rgba(255, 255, 255, 0.5)',
-                textDecoration: 'none',
-                transition: 'color 0.2s',
+                fontWeight: 500,
+                color: '#120B0F',
+                background: 'var(--color-accent)',
+                border: 'none',
+                padding: '0.5rem 1.25rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#fff')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)')}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
             >
-              Sign in
-            </Link>
+              Book a Demo
+            </button>
           </div>
         </nav>
 
         {/* Echo Product Content */}
         <main>
-          <EchoHeroSection />
+          <EchoHeroSection onOpenDemo={() => setIsDemoModalOpen(true)} />
           <EchoProblemSection />
           <EchoCapabilities />
           <EchoInterfaces />
           <EchoArchitecture />
           <EchoSecuritySection />
-          <EchoFinalCTASection />
+          <EchoFinalCTASection onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
         <Footer />
+        <EchoDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
       </div>
     </div>
   );
