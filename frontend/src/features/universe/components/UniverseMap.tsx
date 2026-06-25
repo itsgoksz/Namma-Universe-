@@ -64,7 +64,7 @@ const products: Product[] = [
     tagline: 'A real-time intelligence layer for EV routing, charging, and energy decisions.',
     color: '#6D5EF7',
     glowColor: 'rgba(109, 94, 247, 0.3)',
-    route: '#',
+    route: '/products/ev-copilot',
   },
 ];
 

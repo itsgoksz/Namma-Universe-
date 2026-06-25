@@ -84,8 +84,8 @@ const worlds: ProductWorld[] = [
     color: '#6D5EF7',
     gradientFrom: 'rgba(109, 94, 247, 0.12)',
     gradientTo: 'rgba(109, 94, 247, 0.02)',
-    route: '#',
-    available: false,
+    route: '/products/ev-copilot',
+    available: true,
   },
 ];
 
