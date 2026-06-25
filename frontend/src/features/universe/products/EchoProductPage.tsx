@@ -35,13 +35,6 @@ export default function EchoProductPage() {
         overflowX: 'hidden',
         position: 'relative',
         background: 'transparent',
-        // Make Echo's core background slightly translucent so the Universe shines through
-        '--color-bg-primary': 'rgba(10, 16, 24, 0.85)',
-        '--color-bg-secondary': 'rgba(10, 16, 24, 1)',
-        '--color-bg-tertiary': 'rgba(15, 22, 32, 1)',
-        '--color-accent': '#2DD4FF',
-        '--color-accent-light': 'rgba(45, 212, 255, 0.15)',
-        '--color-accent-subtle': 'rgba(45, 212, 255, 0.05)',
       } as React.CSSProperties}
     >
       {/* Cinematic WebGL Background */}
@@ -63,9 +56,9 @@ export default function EchoProductPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            background: 'rgba(10, 16, 24, 0.8)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            background: 'rgba(5, 10, 14, 0.5)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
           }}
         >
