@@ -54,9 +54,9 @@ const worlds: ProductWorld[] = [
   {
     id: 'echo',
     name: 'Echo',
-    emoji: '🎙',
-    tagline: 'A voice-first memory layer that captures, understands, and responds to your world.',
-    description: 'Echo listens, remembers, and retrieves. A voice-native interface that turns spoken thought into structured knowledge and action.',
+    emoji: '🌾',
+    tagline: 'The operational brain for your farm, tracking fields and monitoring weather natively on the edge.',
+    description: 'Echo is a comprehensive, autonomous AI assistant. It tracks weather, schedules irrigation, manages fertilizer inventory, and synthesizes daily operational reports to help you run your farm on auto-pilot.',
     color: '#2DD4FF',
     gradientFrom: 'rgba(45, 212, 255, 0.12)',
     gradientTo: 'rgba(45, 212, 255, 0.02)',

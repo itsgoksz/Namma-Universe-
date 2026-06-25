@@ -42,8 +42,8 @@ const products: Product[] = [
   {
     id: 'echo',
     name: 'Echo',
-    emoji: '🎙',
-    tagline: 'A voice-first memory layer that captures, understands, and responds to your world.',
+    emoji: '🌾',
+    tagline: 'The operational brain for your farm, tracking fields and monitoring weather natively on the edge.',
     color: '#2DD4FF',
     glowColor: 'rgba(45, 212, 255, 0.25)',
     route: '/products/echo',
