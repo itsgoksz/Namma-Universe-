@@ -22,9 +22,9 @@ export default function WelloraProductPage() {
     // Override global colors for Wellora (Green & Teal influences)
     document.documentElement.style.setProperty('--color-accent', '#2ECC71');
     document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(46, 204, 113, 0.15)');
-    document.documentElement.style.setProperty('--color-bg-primary', '#0A0D0B');
-    document.documentElement.style.setProperty('--color-bg-secondary', '#0A0D0B');
-    document.documentElement.style.setProperty('--color-bg-tertiary', '#0C110E');
+    document.documentElement.style.setProperty('--color-bg-primary', 'rgba(10, 13, 11, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(10, 13, 11, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(12, 17, 14, 0.85)');
 
     return () => {
       // Revert to default/Aiva on unmount

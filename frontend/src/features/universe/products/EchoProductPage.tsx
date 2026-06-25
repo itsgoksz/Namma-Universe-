@@ -25,6 +25,22 @@ export default function EchoProductPage() {
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Override global colors for Echo (Cyan)
+    document.documentElement.style.setProperty('--color-accent', '#2DD4FF');
+    document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(45, 212, 255, 0.15)');
+    document.documentElement.style.setProperty('--color-bg-primary', 'rgba(5, 10, 14, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(6, 11, 16, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(10, 17, 24, 0.85)');
+
+    return () => {
+      // Revert to default/Aiva on unmount
+      document.documentElement.style.setProperty('--color-accent', '#A66B8E');
+      document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(166, 107, 142, 0.15)');
+      document.documentElement.style.setProperty('--color-bg-primary', '#120B0F');
+      document.documentElement.style.setProperty('--color-bg-secondary', '#120B0F');
+      document.documentElement.style.setProperty('--color-bg-tertiary', '#140C11');
+    };
   }, []);
 
   return (

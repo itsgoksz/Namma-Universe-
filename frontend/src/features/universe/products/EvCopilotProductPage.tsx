@@ -23,9 +23,9 @@ export default function EvCopilotProductPage() {
     // Override global colors for EV Copilot (Purple)
     document.documentElement.style.setProperty('--color-accent', '#6D5EF7');
     document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(109, 94, 247, 0.15)');
-    document.documentElement.style.setProperty('--color-bg-primary', '#090812');
-    document.documentElement.style.setProperty('--color-bg-secondary', '#0A0A14');
-    document.documentElement.style.setProperty('--color-bg-tertiary', '#0E0D1A');
+    document.documentElement.style.setProperty('--color-bg-primary', 'rgba(9, 8, 18, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(10, 10, 20, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(14, 13, 26, 0.85)');
 
     return () => {
       // Revert to default/Aiva on unmount
