@@ -26,23 +26,37 @@ export default function UniverseNav() {
         pointerEvents: 'auto',
       }}
     >
+      {/* Deep space top gradient for a seamless blend instead of a hard blocky navbar */}
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(to bottom, rgba(5, 6, 10, 0.95) 0%, rgba(5, 6, 10, 0.0) 100%)',
+          pointerEvents: 'none',
+          zIndex: -1
+        }}
+      />
       <div
         style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: '1.25rem 2rem',
+          padding: '1.5rem 2rem', // Slightly more padding for a floating airy feel
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          background: 'rgba(5, 6, 10, 0.6)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(8px)', // Softer, more ethereal blur
+          WebkitBackdropFilter: 'blur(8px)',
+          background: 'transparent', // Let the gradient handle the shading
+          // Removed the rigid bottom border for a seamless fade into space
         }}
       >
         {/* Wordmark */}
         <Link
           to="/"
+          onClick={() => {
+            // Smoothly scroll back to the cinematic top view
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
