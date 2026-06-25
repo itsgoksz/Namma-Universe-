@@ -56,7 +56,7 @@ const worlds: ProductWorld[] = [
     name: 'Echo',
     emoji: '🌾',
     tagline: 'The operational brain for your farm, tracking fields and monitoring weather natively on the edge.',
-    description: 'Echo is a comprehensive, autonomous AI assistant. It tracks weather, schedules irrigation, manages fertilizer inventory, and synthesizes daily operational reports to help you run your farm on auto-pilot.',
+    description: 'Meet your farm\'s new best friend. Echo keeps a watchful eye on the weather, automatically manages your irrigation, and takes care of your daily reports—so you can spend less time managing data and more time growing your business.',
     color: '#2DD4FF',
     gradientFrom: 'rgba(45, 212, 255, 0.12)',
     gradientTo: 'rgba(45, 212, 255, 0.02)',
