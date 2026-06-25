@@ -12,7 +12,8 @@
 
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { sharedState } from './ParticleField';
 
 interface ProductWorld {
   id: string;
@@ -122,11 +123,18 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
       
       const vh = window.innerHeight;
       
-      if (firstCardTop > vh * 0.8) {
-        // Entering from the top (scrolling down into the section, or up out of it)
-        // firstCardTop goes from ~100vh down to 50vh. We map this to t=0 (-1 idx) to t=1 (0 idx).
+      if (firstCardTop > vh * 0.5) {
+        // Entering from the top
+        // Start transitioning when the card is at 80% vh, finish transitioning to 0 when it hits 50% vh
         let t = 1 - ((firstCardTop - vh * 0.5) / (vh * 0.3));
         t = Math.max(0, Math.min(1, t));
+        
+        // Aggressive snap: if the card is mostly in view, lock to it instantly
+        if (t > 0.4) t = 1;
+        else t = t / 0.4;
+        
+        // Easing
+        t = t * t * (3 - 2 * t);
         
         if (t === 0) {
           activeProductIndexRef.current = null;
@@ -135,9 +143,13 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
         }
       } else if (lastCardBottom < vh * 0.2) {
         // Leaving from the bottom
-        // lastCardBottom goes from 50vh down to 0vh. We map this to t=0 (maxIdx) to t=1 (maxIdx + 1).
         let t = (vh * 0.5 - lastCardBottom) / (vh * 0.3);
         t = Math.max(0, Math.min(1, t));
+        
+        if (t > 0.4) t = 1;
+        else t = t / 0.4;
+        
+        t = t * t * (3 - 2 * t);
         
         if (t === 1) {
           activeProductIndexRef.current = null;
@@ -155,7 +167,17 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
           for (let i = 0; i < worlds.length - 1; i++) {
             if (centerY >= centers[i] && centerY <= centers[i + 1]) {
               const distance = centers[i + 1] - centers[i];
-              const progress = (centerY - centers[i]) / distance;
+              let progress = (centerY - centers[i]) / distance;
+              
+              // Strong snapping to integers:
+              // For the first 30% of the scroll distance, stay locked on card i
+              // For the last 30% of the scroll distance, stay locked on card i+1
+              if (progress < 0.3) progress = 0;
+              else if (progress > 0.7) progress = 1;
+              else progress = (progress - 0.3) / 0.4;
+              
+              progress = progress * progress * (3 - 2 * progress);
+              
               activeProductIndexRef.current = i + progress;
               break;
             }
@@ -219,8 +241,17 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.8, delay: 0.1 }}
             whileHover={world.available ? { scale: 1.01, y: -2 } : {}}
-            onClick={() => { if (world.available) navigate(world.route); }}
-            className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center justify-between text-center md:text-left relative overflow-hidden`}
+            onClick={() => { 
+              if (world.available) {
+                sharedState.isZoomingInto = world.id;
+                sharedState.spawnZoomedIn = true; // Tell the next page to spawn zoomed in!
+                setTimeout(() => {
+                  sharedState.isZoomingInto = null; // Reset for the new page!
+                  navigate(world.route);
+                }, 800);
+              } 
+            }}
+            className={`flex flex-col md:flex-row items-center justify-between text-center md:text-left relative overflow-hidden md:w-[45%] ml-auto`}
             style={{
               padding: 'clamp(2.5rem, 5vw, 6rem) clamp(1.5rem, 4vw, 4rem)',
               minHeight: '65vh', // Massive panels

@@ -20,22 +20,24 @@ const PARTICLE_COUNT = 180000; // Colossal particle count to achieve extreme den
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below
 const PRODUCT_NODES = [
-  { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 1.60, color: [0.44, 0.50, 0.56], size: 1.2 }, // 0: Mercury
-  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 1.10, color: [0.8, 0.2, 0.6], size: 2.5 },  // 1: Venus (Aiva - Pink)
-  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.80, color: [0.2, 0.8, 0.4], size: 2.0 },  // 2: Earth (Wellora - Green)
-  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.50, color: [0.88, 0.44, 0.22], size: 1.5 }, // 3: Mars
-  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.25, color: [0.9, 0.7, 0.2], size: 4.0 },  // 4: Jupiter (Homie - Amber)
-  { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.15, color: [0.93, 0.86, 0.51], size: 4.0 }, // 5: Saturn
-  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.10, color: [0.5, 0.2, 0.9], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
-  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.1, 0.4, 0.9], size: 2.2 }, // 7: Neptune (Echo - Blue)
+  { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 0.08, color: [0.44, 0.50, 0.56], size: 1.2 }, // 0: Mercury
+  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.8, 0.2, 0.6], size: 2.5 },  // 1: Venus (Aiva - Pink)
+  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.04, color: [0.2, 0.8, 0.4], size: 2.0 },  // 2: Earth (Wellora - Green)
+  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.03, color: [0.88, 0.44, 0.22], size: 1.5 }, // 3: Mars
+  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.015, color: [0.9, 0.7, 0.2], size: 4.0 },  // 4: Jupiter (Homie - Amber)
+  { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.01, color: [0.93, 0.86, 0.51], size: 4.0 }, // 5: Saturn
+  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.008, color: [0.5, 0.2, 0.9], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
+  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.005, color: [0.1, 0.4, 0.9], size: 2.2 }, // 7: Neptune (Echo - Blue)
 ];
 
 // Map Product Index (0-4) to Planet Index in PRODUCT_NODES
 const productToPlanetMap = [1, 2, 7, 6, 4];
 
-// Global state for cinematic entry animation
-const sharedState = {
-  entryTilt: Math.PI / 2.5 // Start by looking from high above (top-down view)
+// Global state for cross-route cinematic transitions
+export const sharedState = {
+  entryTilt: Math.PI / 2.5, // Start by looking from high above (top-down view)
+  isZoomingInto: null as string | null,
+  spawnZoomedIn: false
 };
 
 // ─── GLSL Shaders ────────────────────────────────────────────
@@ -186,7 +188,7 @@ const vertexShader = /* glsl */ `
     // SAFEGUARD: clamp the divisor. 
     // Instead of a hardcoded constant, calculate attenuation relative to screen height!
     // This guarantees the visual size is a consistent percentage of the screen across ALL resolutions.
-    float sizeAttenuation = (uHeight * 0.12) / max(-mvPosition.z, 0.5);
+    float sizeAttenuation = (uHeight * 0.12) / max(-mvPosition.z, 0.05);
     
     // Increase base size slightly (from 0.15 to 0.5) so they are more visible
     gl_PointSize = (aSize * 0.5) * pulse * sizeAttenuation * uPixelRatio;
@@ -199,12 +201,12 @@ const vertexShader = /* glsl */ `
 
     // CRITICAL SAFEGUARD: Hard clamp point size to 1200 to prevent strict Windows WebGL drivers 
     // from completely culling and discarding the point if it exceeds ALIASED_POINT_SIZE_RANGE.
-    gl_PointSize = min(gl_PointSize, 1200.0);
+    gl_PointSize = min(gl_PointSize, 4000.0);
 
     // SAFEGUARD: Dynamic clamp based on screen height instead of an absolute 2500px!
     // This prevents the sun from blowing out on low-res screens (1x pixel ratio Windows laptops)
     // while allowing it to be huge on high-res retina displays.
-    gl_PointSize = min(gl_PointSize, uHeight * uPixelRatio * 1.8);
+    gl_PointSize = min(gl_PointSize, uHeight * uPixelRatio * 4.0);
 
     gl_Position  = projectionMatrix * mvPosition;
 
@@ -256,11 +258,12 @@ const fragmentShader = /* glsl */ `
 // ─── Particles Scene Component ───────────────────────────────
 
 interface ParticlesProps {
-  progressRef: MutableRefObject<number>;
-  mouseRef: MutableRefObject<{ x: number, y: number }>;
+  progressRef: React.MutableRefObject<number>;
+  mouseRef: React.MutableRefObject<{ x: number; y: number }>;
+  activeProductIndexRef?: React.MutableRefObject<number | null>;
 }
 
-function Particles({ progressRef, mouseRef }: ParticlesProps) {
+function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesProps) {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const groupRef = useRef<THREE.Group>(null);
   const smoothProgress = useRef(0);
@@ -414,12 +417,12 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
   }), []);
 
   // Animation loop
-  useFrame(({ camera }, delta) => {
+  useFrame(({ camera, clock }, delta) => {
     smoothProgress.current += (progressRef.current - smoothProgress.current) * (1 - Math.exp(-6 * delta));
 
     if (materialRef.current && groupRef.current) {
       materialRef.current.uniforms.uProgress.value = smoothProgress.current;
-      materialRef.current.uniforms.uTime.value += delta;
+      materialRef.current.uniforms.uTime.value = clock.elapsedTime;
       materialRef.current.uniforms.uHeight.value = window.innerHeight;
       
       // Calculate mouse with a bit more smoothing for the gravity feel
@@ -465,6 +468,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
 
   return (
     <group ref={groupRef}>
+      <ActivePlanet activeProductIndexRef={activeProductIndexRef} />
       <points frustumCulled={false} geometry={geometry as any}>
         <shaderMaterial
           ref={materialRef}
@@ -537,6 +541,156 @@ function SolarSystemRings({ progressRef, mouseRef }: ParticlesProps) {
   );
 }
 
+function ActivePlanet({ activeProductIndexRef }: { activeProductIndexRef?: React.MutableRefObject<number | null> }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
+  const { clock } = useThree();
+
+  useFrame(() => {
+    if (!activeProductIndexRef || activeProductIndexRef.current === null) {
+      if (meshRef.current) meshRef.current.visible = false;
+      return;
+    }
+    
+    if (meshRef.current) meshRef.current.visible = true;
+
+    // Snap to the exact integer to show ONE planet cleanly
+    const idx = Math.round(activeProductIndexRef.current);
+    if (idx < 0 || idx >= productToPlanetMap.length) return;
+    
+    const p0 = PRODUCT_NODES[productToPlanetMap[idx]];
+    
+    const angle0 = p0.startAngle + clock.elapsedTime * p0.speed;
+    const pos0 = new THREE.Vector3(
+      Math.cos(angle0) * p0.radius,
+      Math.sin(angle0) * p0.radius * 0.15,
+      Math.sin(angle0) * p0.radius
+    );
+    
+    meshRef.current.position.copy(pos0);
+    // Slowly rotate the planet for a majestic feel
+    meshRef.current.rotation.y += 0.002;
+    meshRef.current.rotation.x += 0.001;
+    
+    if (materialRef.current) {
+      materialRef.current.uniforms.uColor.value.setRGB(p0.color[0], p0.color[1], p0.color[2]);
+      materialRef.current.uniforms.uTime.value = clock.elapsedTime;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} visible={false}>
+      <sphereGeometry args={[0.2, 64, 64]} />
+      <shaderMaterial
+        ref={materialRef}
+        transparent
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        uniforms={{
+          uColor: { value: new THREE.Color() },
+          uTime: { value: 0 }
+        }}
+        vertexShader={`
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying vec3 vObjPos;
+          varying vec3 vViewPosition;
+          void main() {
+            vUv = uv;
+            vObjPos = position;
+            vNormal = normalize(normalMatrix * normal);
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            vViewPosition = -mvPosition.xyz;
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `}
+        fragmentShader={`
+          uniform vec3 uColor;
+          uniform float uTime;
+          varying vec2 vUv;
+          varying vec3 vNormal;
+          varying vec3 vObjPos;
+          varying vec3 vViewPosition;
+          
+          // Simplex 3D Noise
+          vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+          vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+          float snoise(vec3 v) {
+            const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+            const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+            vec3 i  = floor(v + dot(v, C.yyy) );
+            vec3 x0 = v - i + dot(i, C.xxx) ;
+            vec3 g = step(x0.yzx, x0.xyz);
+            vec3 l = 1.0 - g;
+            vec3 i1 = min( g.xyz, l.zxy );
+            vec3 i2 = max( g.xyz, l.zxy );
+            vec3 x1 = x0 - i1 + C.xxx;
+            vec3 x2 = x0 - i2 + C.yyy;
+            vec3 x3 = x0 - D.yyy;
+            i = mod289(i);
+            vec4 p = permute( permute( permute( i.z + vec4(0.0, i1.z, i2.z, 1.0 )) + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
+            float n_ = 0.142857142857;
+            vec3  ns = n_ * D.wyz - D.xzx;
+            vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+            vec4 x_ = floor(j * ns.z);
+            vec4 y_ = floor(j - 7.0 * x_ );
+            vec4 x = x_ *ns.x + ns.yyyy;
+            vec4 y = y_ *ns.x + ns.yyyy;
+            vec4 h = 1.0 - abs(x) - abs(y);
+            vec4 b0 = vec4( x.xy, y.xy );
+            vec4 b1 = vec4( x.zw, y.zw );
+            vec4 s0 = floor(b0)*2.0 + 1.0;
+            vec4 s1 = floor(b1)*2.0 + 1.0;
+            vec4 sh = -step(h, vec4(0.0));
+            vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+            vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+            vec3 p0 = vec3(a0.xy,h.x);
+            vec3 p1 = vec3(a0.zw,h.y);
+            vec3 p2 = vec3(a1.xy,h.z);
+            vec3 p3 = vec3(a1.zw,h.w);
+            vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+            p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+            vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+            m = m * m;
+            return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+          }
+          
+          float fbm(vec3 x) {
+            float v = 0.0; float a = 0.5; vec3 shift = vec3(100);
+            for (int i = 0; i < 4; ++i) { v += a * snoise(x); x = x * 2.0 + shift; a *= 0.5; }
+            return v;
+          }
+
+          void main() {
+            vec3 viewDir = normalize(vViewPosition);
+            float rim = 1.0 - max(dot(viewDir, vNormal), 0.0);
+            float smoothRim = smoothstep(0.5, 1.0, rim);
+            
+            vec3 spherePos = normalize(vObjPos) * 5.0;
+            
+            // Lava/Energy cracks
+            float cracks = fbm(spherePos * 1.5 - uTime * 0.1);
+            float energyMask = smoothstep(0.4, 0.6, abs(cracks));
+            
+            vec3 baseColor = uColor * 0.15;
+            vec3 energyColor = uColor * (1.0 - energyMask) * 2.5;
+            vec3 rimColor = uColor * smoothRim * 2.0;
+            
+            vec3 finalColor = baseColor + energyColor + rimColor;
+            
+            // Soft fade on the edges so it blends beautifully with deep space
+            float alpha = smoothstep(0.0, 0.4, dot(viewDir, vNormal));
+            
+            gl_FragColor = vec4(finalColor, alpha);
+          }
+        `}
+      />
+    </mesh>
+  );
+}
+
 
 
 interface CameraControllerProps {
@@ -553,6 +707,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
   const smoothMouse = useRef({ x: 0, y: 0 });
   const smoothTarget = useRef(new THREE.Vector3(0, 0, 25));
   const smoothLookAt = useRef(new THREE.Vector3(0, 0, 0));
+  const isFirstFrame = useRef(true);
 
   useFrame(({ clock }, delta) => {
     // Sync shared smoothing variables
@@ -601,7 +756,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         pos0.applyEuler(euler);
         
         const planetLook = pos0.clone();
-        const planetPos = pos0.clone().add(new THREE.Vector3(0, 0.5, 3.0));
+        const planetPos = pos0.clone().add(new THREE.Vector3(0, 0.02, 0.4));
         
         targetLook.lerp(planetLook, t);
         targetPos.lerp(planetPos, t);
@@ -628,7 +783,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         pos1.applyEuler(euler);
         
         const planetLook = pos1.clone();
-        const planetPos = pos1.clone().add(new THREE.Vector3(0, 0.5, 3.0));
+        const planetPos = pos1.clone().add(new THREE.Vector3(0, 0.02, 0.15));
         
         targetLook.lerp(planetLook, t);
         targetPos.lerp(planetPos, t);
@@ -667,13 +822,32 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         pos.applyEuler(euler);
         
         targetLook.copy(pos);
-        targetPos.copy(pos).add(new THREE.Vector3(0, 0.5, 3.0));
+        targetPos.copy(pos).add(new THREE.Vector3(0, 0.02, 0.4));
+      }
+
+      if (activeProductIndexRef && activeProductIndexRef.current !== null) {
+        if (sharedState.isZoomingInto) {
+          targetPos.copy(targetLook).add(new THREE.Vector3(0, 0, 0.05));
+        } else {
+          const panOffset = new THREE.Vector3(0.22, 0, 0);
+          targetLook.add(panOffset);
+          targetPos.add(panOffset);
+        }
       }
     }
 
-    // Smoothly interpolate camera
-    smoothTarget.current.lerp(targetPos, 1 - Math.exp(-3.0 * delta));
-    smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-4.0 * delta));
+    if (isFirstFrame.current && sharedState.spawnZoomedIn) {
+      // Instantly snap to position if we just arrived from a cinematic warp
+      smoothTarget.current.copy(targetPos);
+      smoothLookAt.current.copy(targetLook);
+    } else {
+      // Smoothly interpolate camera. Use high speed when tracking a planet to prevent lag/drift!
+      const isTrackingPlanet = activeProductIndexRef && activeProductIndexRef.current !== null;
+      const speed = sharedState.isZoomingInto ? 20.0 : (isTrackingPlanet ? 15.0 : 3.0);
+      smoothTarget.current.lerp(targetPos, 1 - Math.exp(-speed * delta));
+      smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-(speed + 1.0) * delta));
+    }
+    isFirstFrame.current = false;
 
     camera.position.copy(smoothTarget.current);
     camera.lookAt(smoothLookAt.current);
@@ -820,7 +994,7 @@ export default function ParticleField({ progressRef, activeProductIndexRef, clas
         <fog attach="fog" args={['#05060A', 15, 90]} />
         
         <CameraController progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} mouseRef={mouseRef} />
-        <Particles progressRef={progressRef} mouseRef={mouseRef} />
+        <Particles progressRef={progressRef} mouseRef={mouseRef} activeProductIndexRef={activeProductIndexRef} />
         <SolarSystemRings progressRef={progressRef} mouseRef={mouseRef} />
         <SpaceshipCursor mouseRef={mouseRef} />
       </Canvas>
