@@ -8,14 +8,14 @@
  * - Interactive mouse parallax for deep spatial feel
  */
 
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect, Suspense } from 'react';
 import type { MutableRefObject } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // ─── Constants ───────────────────────────────────────────────
 
-const PARTICLE_COUNT = 25000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
+const PARTICLE_COUNT = 35000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
 
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below
@@ -39,7 +39,8 @@ const vertexShader = /* glsl */ `
   uniform float uProgress;
   uniform float uTime;
   uniform float uPixelRatio;
-  uniform vec2 uMouse;
+  uniform vec3 uRayOrigin;
+  uniform vec3 uRayDir;
 
   attribute vec3 aExpandedPos;
   attribute vec3 aTarget;
@@ -136,27 +137,33 @@ const vertexShader = /* glsl */ `
       pos.z = mod(pos.z + uTime * driftSpeed + 80.0, 100.0) - 80.0;
     }
 
-    // ── MOUSE GRAVITATIONAL PULL ──
+    // ── PREMIUM SPACESHIP GRAVITY (PERFECT 3D RAYCAST) ──
     if (isProductNode < 0.5 && settlement > 0.5) {
-      // Calculate approximate screen space depth to align mouse with world space
-      float depth = max(5.0, 25.0 - pos.z); 
-      vec2 mouseWorld = uMouse * (depth * 0.4); 
+      vec3 w = pos - uRayOrigin;
+      float t = dot(w, uRayDir);
+      vec3 nearestRayPoint = uRayOrigin + t * uRayDir;
       
-      vec2 dirToMouse = mouseWorld - pos.xy;
+      vec3 dirToMouse = nearestRayPoint - pos;
       float distToMouse = length(dirToMouse);
       
-      // Calculate a massive gravitational well around the mouse (increased from 18.0 to 45.0)
-      float pull = smoothstep(45.0, 0.0, distToMouse);
+      // Calculate a soft, elegant radius for the gravitational field
+      float pull = smoothstep(10.0, 0.0, distToMouse);
+      float smoothPull = pow(pull, 2.0); // very smooth falloff for premium feel
       
-      // Pull particles massively towards the cursor (increased from 6.0 to 20.0)
-      // We also use a nonlinear curve for the pull so the core is very dense
-      float strongPull = pow(pull, 1.5) * 20.0;
-      
-      vec2 pullVec = normalize(dirToMouse) * strongPull;
-      vec2 swirlVec = vec2(-dirToMouse.y, dirToMouse.x) * pull * 0.3;
-      
-      pos.xy += pullVec + swirlVec;
-      pos.z += pull * 8.0; // Bulge them forward significantly!
+      if (pull > 0.0) {
+        // 1. Elegant Attraction: Pull particles gracefully towards the ship's path
+        float pullStrength = min(distToMouse * 0.85, smoothPull * 6.0);
+        vec3 pullVec = normalize(dirToMouse) * pullStrength;
+        
+        // 2. Liquid Swirl: Extremely subtle rotational swirl around the ship
+        vec3 swirlVec = normalize(cross(uRayDir, dirToMouse)) * (smoothPull * 0.8);
+        
+        // 3. Optical Depth: Pull them slightly forward towards the camera 
+        // to create a beautiful, prominent 3D cluster effect behind the ship.
+        vec3 depthPull = -uRayDir * (smoothPull * 2.5);
+        
+        pos += pullVec + swirlVec + depthPull;
+      }
     }
 
     // Gentle floating in final state
@@ -248,7 +255,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
   const smoothMouse = useRef({ x: 0, y: 0 });
 
   // Force geometry rebuild on HMR
-  const GEOMETRY_VERSION = 7;
+  const GEOMETRY_VERSION = 9;
 
   // Pre-compute particle geometry data
   const { geometry } = useMemo(() => {
@@ -266,6 +273,8 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
       new THREE.Color('#6D5EF7'), // bright violet
       new THREE.Color('#2DD4FF'), // cyan
       new THREE.Color('#FFFFFF'), // white dust
+      new THREE.Color('#FFB347'), // warm amber/gold (nebula feel)
+      new THREE.Color('#FF7B54'), // deep coral/orange
     ];
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
@@ -311,11 +320,12 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
         targets[i * 3]     = 0;
         targets[i * 3 + 1] = 0;
         targets[i * 3 + 2] = 0;
-        sizes[i]          = 12.0; // Massively increased size
+        sizes[i]          = 50.0; // Massive glowing sun
         colors[i * 3]     = 1.0; 
         colors[i * 3 + 1] = 0.85; // Bright vibrant yellow
         colors[i * 3 + 2] = 0.15;
-        isProduct[i]      = 0.0;
+        // MUST be 1.0 so it doesn't drift like background dust
+        isProduct[i]      = 1.0;
       } else {
         // Ambient background dust final targets: infinite deep starry tunnel
         // Uniform circular distribution inside a radius of 40, keeping a hollow core of 3
@@ -340,16 +350,23 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
           colors[i * 3 + 2] = color.b;
         } else {
           // Normal background dust
-          sizes[i] = Math.random() * 1.0 + 0.2;
-          // Pick color based on radius in the tunnel
+          sizes[i] = Math.random() * 1.5 + 0.3;
+          // Pick color based on radius and random distribution
           let colBase: THREE.Color;
-          if (tunnelRadius < 8.0) {
-            colBase = cosmicColors[4]; // White/bright core
-          } else if (tunnelRadius < 16.0) {
-            colBase = cosmicColors[3].clone().lerp(cosmicColors[2], Math.random()); // Cyan/Violet mid
+          
+          if (Math.random() > 0.6) {
+             // 40% chance for Warm Nebula (Amber/Coral)
+             colBase = cosmicColors[5].clone().lerp(cosmicColors[6], Math.random());
           } else {
-            colBase = cosmicColors[2].clone().lerp(cosmicColors[4], Math.random()); // Violet/White edge (bright!)
+             if (tunnelRadius < 8.0) {
+               colBase = cosmicColors[4]; // White/bright core
+             } else if (tunnelRadius < 16.0) {
+               colBase = cosmicColors[3].clone().lerp(cosmicColors[2], Math.random()); // Cyan/Violet mid
+             } else {
+               colBase = cosmicColors[2].clone().lerp(cosmicColors[4], Math.random()); // Violet/White edge (bright!)
+             }
           }
+          
           colors[i * 3]     = colBase.r;
           colors[i * 3 + 1] = colBase.g;
           colors[i * 3 + 2] = colBase.b;
@@ -374,14 +391,15 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
     uProgress:   { value: 0 },
     uTime:       { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
-    uMouse:      { value: new THREE.Vector2(0, 0) },
+    uRayOrigin:  { value: new THREE.Vector3() },
+    uRayDir:     { value: new THREE.Vector3() },
   }), []);
 
   // Animation loop
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     smoothProgress.current += (progressRef.current - smoothProgress.current) * (1 - Math.exp(-6 * delta));
 
-    if (materialRef.current) {
+    if (materialRef.current && groupRef.current) {
       materialRef.current.uniforms.uProgress.value = smoothProgress.current;
       materialRef.current.uniforms.uTime.value += delta;
       
@@ -389,9 +407,23 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
       smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
       smoothMouse.current.y += (mouseRef.current.y - smoothMouse.current.y) * (1 - Math.exp(-4 * delta));
       
-      // Pass the current smooth mouse to the shader for the gravitational pull
-      // Y is inverted because screen space Y is down, WebGL Y is up
-      materialRef.current.uniforms.uMouse.value.set(smoothMouse.current.x, -smoothMouse.current.y);
+      // Perfect 3D Raycasting: Convert mouse coordinates to a true 3D ray in the group's local space
+      const mouseVec = new THREE.Vector3(smoothMouse.current.x, -smoothMouse.current.y, 0.5);
+      mouseVec.unproject(camera);
+      
+      const rayOrigin = camera.position.clone();
+      const rayDir = mouseVec.sub(camera.position).normalize();
+      
+      // Convert to local space of the particle group to match vertex coordinates
+      groupRef.current.worldToLocal(rayOrigin);
+      
+      const rayTarget = camera.position.clone().add(rayDir);
+      groupRef.current.worldToLocal(rayTarget);
+      
+      const localRayDir = rayTarget.sub(rayOrigin).normalize();
+      
+      materialRef.current.uniforms.uRayOrigin.value.copy(rayOrigin);
+      materialRef.current.uniforms.uRayDir.value.copy(localRayDir);
     }
 
     // Apply parallax to the entire group
@@ -486,7 +518,7 @@ function SolarSystemRings({ progressRef, mouseRef }: ParticlesProps) {
   );
 }
 
-import { useThree } from '@react-three/fiber';
+
 
 interface CameraControllerProps {
   progressRef: MutableRefObject<number>;
@@ -627,6 +659,67 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
   return null;
 }
 
+// ─── Spaceship Cursor Component ─────────────────────────────
+
+function SpaceshipCursorModel({ mouseRef }: { mouseRef: React.MutableRefObject<{ x: number, y: number }> }) {
+  const shipRef = useRef<THREE.Group>(null);
+  const { camera } = useThree();
+  const prevPos = useRef(new THREE.Vector3());
+  
+  // Load the user's custom image using native R3F useLoader to prevent context errors
+  const texture = useLoader(THREE.TextureLoader, '/space-probe.png');
+
+  useFrame((state, delta) => {
+    if (!shipRef.current) return;
+    
+    // Unproject to find world position at a fixed distance from the camera
+    const mouseVec = new THREE.Vector3(mouseRef.current.x, -mouseRef.current.y, 0.5);
+    mouseVec.unproject(camera);
+    
+    const rayDir = mouseVec.sub(camera.position).normalize();
+    
+    // Place ship 10 units in front of the camera perfectly on the interaction ray
+    const shipPos = camera.position.clone().add(rayDir.multiplyScalar(10.0));
+    
+    // Smooth lerp for a floating, trailing follow effect
+    shipRef.current.position.lerp(shipPos, 1 - Math.exp(-12 * delta));
+    
+    // Calculate velocity for banking/tilting
+    const velocity = shipRef.current.position.clone().sub(prevPos.current);
+    prevPos.current.copy(shipRef.current.position);
+    
+    // Always perfectly face the camera like a 2D cursor sprite
+    shipRef.current.lookAt(camera.position);
+    
+    // Add a subtle 2D roll based on horizontal movement for a dynamic flying feel
+    const targetRoll = -velocity.x * 2.0;
+    shipRef.current.rotation.z = THREE.MathUtils.lerp(shipRef.current.rotation.z, targetRoll, 0.1);
+  });
+
+  return (
+    <group ref={shipRef}>
+      <mesh>
+        {/* Flat plane sized to the requested small probe size */}
+        <planeGeometry args={[0.5, 0.5]} />
+        <meshBasicMaterial 
+          map={texture} 
+          transparent={true} 
+          side={THREE.DoubleSide} 
+          depthTest={false} // Ensures the cursor always renders fully on top of stars
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function SpaceshipCursor({ mouseRef }: { mouseRef: React.MutableRefObject<{ x: number, y: number }> }) {
+  return (
+    <Suspense fallback={null}>
+      <SpaceshipCursorModel mouseRef={mouseRef} />
+    </Suspense>
+  );
+}
+
 // ─── Main Canvas Export ──────────────────────────────────────
 
 interface ParticleFieldProps {
@@ -695,6 +788,7 @@ export default function ParticleField({ progressRef, activeProductIndexRef, clas
         <CameraController progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} mouseRef={mouseRef} />
         <Particles progressRef={progressRef} mouseRef={mouseRef} />
         <SolarSystemRings progressRef={progressRef} mouseRef={mouseRef} />
+        <SpaceshipCursor mouseRef={mouseRef} />
       </Canvas>
     </div>
   );

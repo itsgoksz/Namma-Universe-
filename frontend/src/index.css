@@ -328,3 +328,22 @@
     width: 256px !important;
   }
 }
+
+/* ============================================================
+   Namma Universe — Custom Pointer Logic
+   ============================================================ */
+
+.universe-cursor-none {
+  cursor: none;
+}
+.universe-cursor-none a,
+.universe-cursor-none button,
+.universe-cursor-none [role="button"],
+.universe-cursor-none input,
+.universe-cursor-none .cursor-pointer {
+  cursor: pointer;
+}
+.universe-cursor-none footer,
+.universe-cursor-none footer * {
+  cursor: auto !important;
+}
