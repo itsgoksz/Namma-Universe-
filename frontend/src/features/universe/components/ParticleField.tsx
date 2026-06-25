@@ -15,7 +15,7 @@ import * as THREE from 'three';
 
 // ─── Constants ───────────────────────────────────────────────
 
-const PARTICLE_COUNT = 100000; // Increased to 100k to maintain intense density across the new massive hyper-drive flight path
+const PARTICLE_COUNT = 150000; // Colossal particle count to achieve extreme density during the volumetric burst
 
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below
@@ -306,13 +306,14 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
       // 2. Expanded Galaxy State (Structured 3-arm spiral)
       const arm = Math.floor(Math.random() * 3);
       const angle = Math.random() * Math.PI * 2;
-      // Much larger radius (100) to ensure the burst completely fills all edges of the screen
-      const radius = 0.5 + Math.pow(Math.random(), 2.0) * 100.0; 
+      // Massively increase clustering power (from 2.0 to 3.5) so the VAST majority of the 150k stars are packed 
+      // into an ultra-dense core, while the remaining stars still explode out to 100 radius to fill the screen corners.
+      const radius = 0.5 + Math.pow(Math.random(), 3.5) * 100.0; 
       const spinAngle = angle + radius * 0.4 + arm * ((Math.PI * 2) / 3);
       
       const armOffset = (Math.random() - 0.5) * 3.0;
-      // Massive vertical thickness (40) so the burst is a huge volumetric cloud, not a flat line!
-      const thickness = (Math.random() - 0.5) * 40.0 * (1.0 - radius / 100.0);
+      // Reduce vertical thickness slightly (from 40 to 25) to heavily compress the volume and intensify the burst density!
+      const thickness = (Math.random() - 0.5) * 25.0 * (1.0 - radius / 100.0);
       
       expandedPos[i * 3]     = Math.cos(spinAngle) * radius + armOffset;
       expandedPos[i * 3 + 1] = thickness;
