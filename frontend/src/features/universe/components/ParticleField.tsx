@@ -15,7 +15,7 @@ import * as THREE from 'three';
 
 // ─── Constants ───────────────────────────────────────────────
 
-const PARTICLE_COUNT = 35000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
+const PARTICLE_COUNT = 100000; // Increased to 100k to maintain intense density across the new massive hyper-drive flight path
 
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below
@@ -32,6 +32,11 @@ const PRODUCT_NODES = [
 
 // Map Product Index (0-4) to Planet Index in PRODUCT_NODES
 const productToPlanetMap = [1, 2, 7, 6, 4];
+
+// Global state for cinematic entry animation
+const sharedState = {
+  entryTilt: Math.PI / 2.5 // Start by looking from high above (top-down view)
+};
 
 // ─── GLSL Shaders ────────────────────────────────────────────
 
@@ -188,9 +193,13 @@ const vertexShader = /* glsl */ `
     
     // Focus on the central sun and planets
     // Nodes are larger, Sun is massive
-    float targetSize = aSize * sizeAttenuation * uPixelRatio * 1.5;
-    targetSize = mix(targetSize, targetSize * 4.0, isSun);
+    float targetSize = aSize * sizeAttenuation * uPixelRatio * 3.0; // Slightly slightly bigger planets
+    targetSize = mix(targetSize, targetSize * 6.0, isSun); // Balance sun so it doesn't get too massive
     gl_PointSize = mix(gl_PointSize, targetSize, isProductNode * settlement);
+
+    // CRITICAL SAFEGUARD: Hard clamp point size to 1200 to prevent strict Windows WebGL drivers 
+    // from completely culling and discarding the point if it exceeds ALIASED_POINT_SIZE_RANGE.
+    gl_PointSize = min(gl_PointSize, 1200.0);
 
     // SAFEGUARD: Dynamic clamp based on screen height instead of an absolute 2500px!
     // This prevents the sun from blowing out on low-res screens (1x pixel ratio Windows laptops)
@@ -297,13 +306,13 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
       // 2. Expanded Galaxy State (Structured 3-arm spiral)
       const arm = Math.floor(Math.random() * 3);
       const angle = Math.random() * Math.PI * 2;
-      // Much larger radius to fill screen edges
-      const radius = 0.5 + Math.pow(Math.random(), 2.0) * 40.0; 
+      // Much larger radius (100) to ensure the burst completely fills all edges of the screen
+      const radius = 0.5 + Math.pow(Math.random(), 2.0) * 100.0; 
       const spinAngle = angle + radius * 0.4 + arm * ((Math.PI * 2) / 3);
       
       const armOffset = (Math.random() - 0.5) * 3.0;
-      // Much thicker to prevent it from looking like a flat line
-      const thickness = (Math.random() - 0.5) * 6.0 * (1.0 - radius / 30.0);
+      // Massive vertical thickness (40) so the burst is a huge volumetric cloud, not a flat line!
+      const thickness = (Math.random() - 0.5) * 40.0 * (1.0 - radius / 100.0);
       
       expandedPos[i * 3]     = Math.cos(spinAngle) * radius + armOffset;
       expandedPos[i * 3 + 1] = thickness;
@@ -332,15 +341,20 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
         // MUST be 1.0 so it doesn't drift like background dust
         isProduct[i]      = 1.0;
       } else {
-        // Ambient background dust final targets: infinite deep starry tunnel
-        // Uniform circular distribution inside a radius of 40, keeping a hollow core of 3
-        const tunnelRadius = 3.0 + Math.sqrt(Math.random()) * 40.0; 
+        // 80% of stars stay in the ultra-dense central core to keep the solar system rich, 
+        // 20% span out to a massive radius (100) to fill the screen corners during the flight!
+        const isCore = Math.random() < 0.8;
+        const tunnelRadius = isCore 
+          ? 3.0 + Math.sqrt(Math.random()) * 40.0 
+          : 43.0 + Math.random() * 60.0;
+          
         const tunnelAngle = Math.random() * Math.PI * 2;
-        // Uniformly distribute stars along the Z-axis safely to -70
-        const tunnelZ = 10.0 - Math.random() * 80.0; 
+        // Wrap stars all the way from the distant starting camera (+150) down into the deep background (-70)
+        const tunnelZ = 150.0 - Math.random() * 220.0; 
         
         targets[i * 3]     = Math.cos(tunnelAngle) * tunnelRadius;
-        targets[i * 3 + 1] = Math.sin(tunnelAngle) * tunnelRadius * 0.6; // Squashed vertically for galaxy feel
+        // Keep the vertical galaxy squash for the dense core, but let the outer shell be a massive perfect circle
+        targets[i * 3 + 1] = Math.sin(tunnelAngle) * tunnelRadius * (isCore ? 0.6 : 1.0);
         targets[i * 3 + 2] = tunnelZ;
         isProduct[i]       = 0.0;
         
@@ -444,7 +458,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
 
       // Tilt the universe based on mouse (parallax) and deep scroll
       groupRef.current.rotation.y = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
-      groupRef.current.rotation.x = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+      groupRef.current.rotation.x = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02) + sharedState.entryTilt;
       
       // Cinematic spin (roll) around the camera's flight path
       groupRef.current.rotation.z = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
@@ -491,7 +505,7 @@ function SolarSystemRings({ progressRef, mouseRef }: ParticlesProps) {
       
       // Match the exact cinematic rotation of the particle group
       groupRef.current.rotation.y = smoothMouse.current.x * 0.15;
-      groupRef.current.rotation.x = -smoothMouse.current.y * 0.15;
+      groupRef.current.rotation.x = -smoothMouse.current.y * 0.15 + sharedState.entryTilt;
       groupRef.current.rotation.z = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
     }
   });
@@ -535,7 +549,7 @@ interface CameraControllerProps {
 
 function CameraController({ progressRef, activeProductIndexRef, mouseRef }: CameraControllerProps) {
   const { camera } = useThree();
-  const initialZoom = useRef(25);
+  const initialZoom = useRef(150.0); // Start insanely far out for a hyper-immersive, cinematic fly-in
   
   const smoothProgress = useRef(0);
   const smoothMouse = useRef({ x: 0, y: 0 });
@@ -548,7 +562,11 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
     smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
     smoothMouse.current.y += (mouseRef.current.y - smoothMouse.current.y) * (1 - Math.exp(-4 * delta));
 
-    initialZoom.current += (10.0 - initialZoom.current) * (1 - Math.exp(-2.0 * delta));
+    // Majestic, slow, cinematic flight through the stars before settling into the solar system (0.5 instead of 2.0 multiplier)
+    initialZoom.current += (17.5 - initialZoom.current) * (1 - Math.exp(-0.5 * delta));
+
+    // Decay the top-down entry tilt so the solar system beautifully flattens out as we arrive
+    sharedState.entryTilt += (0 - sharedState.entryTilt) * (1 - Math.exp(-0.5 * delta));
     
     const scrollY = window.scrollY;
     const vh = window.innerHeight;
@@ -577,7 +595,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         );
         
         const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
-        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02) + sharedState.entryTilt;
         const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
         const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
         const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
@@ -604,7 +622,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         );
         
         const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
-        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02) + sharedState.entryTilt;
         const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
         const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
         const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
@@ -643,7 +661,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         const pos = new THREE.Vector3().lerpVectors(pos0, pos1, t);
         
         const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
-        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02) + sharedState.entryTilt;
         const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
         const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
         
