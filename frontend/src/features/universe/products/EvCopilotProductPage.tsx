@@ -15,17 +15,18 @@ import ParticleField from '../components/ParticleField';
 export default function EvCopilotProductPage() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const progressRef = useRef(1); // Set to 1 to show the fully formed Constellation/Solar System
+  const activeProductIndexRef = useRef<number | null>(3); // EV Copilot is index 3
 
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Override global colors for EV Copilot (Purple)
+    // Override global colors for EV Copilot (Electric Purple/Blue influences)
     document.documentElement.style.setProperty('--color-accent', '#6D5EF7');
     document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(109, 94, 247, 0.15)');
     document.documentElement.style.setProperty('--color-bg-primary', 'rgba(9, 8, 18, 0.85)');
-    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(10, 10, 20, 0.85)');
-    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(14, 13, 26, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(9, 8, 18, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(11, 10, 22, 0.85)');
 
     return () => {
       // Revert to default/Aiva on unmount
@@ -44,7 +45,7 @@ export default function EvCopilotProductPage() {
     <div className="relative min-h-screen selection:bg-[var(--color-accent)] selection:text-white" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
       {/* Background WebGL / Particle Effect */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
-        <ParticleField progressRef={progressRef} />
+        <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
       </div>
 
       <motion.div 

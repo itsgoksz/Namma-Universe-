@@ -15,7 +15,7 @@ import * as THREE from 'three';
 
 // ─── Constants ───────────────────────────────────────────────
 
-const PARTICLE_COUNT = 15000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
+const PARTICLE_COUNT = 25000; // Massively increased for a deeply dense, rich galaxy that fills the whole tunnel
 
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below
@@ -31,7 +31,7 @@ const PRODUCT_NODES = [
 ];
 
 // Map Product Index (0-4) to Planet Index in PRODUCT_NODES
-const productToPlanetMap = [1, 2, 7, 4, 6];
+const productToPlanetMap = [1, 2, 7, 6, 4];
 
 // ─── GLSL Shaders ────────────────────────────────────────────
 
@@ -39,6 +39,7 @@ const vertexShader = /* glsl */ `
   uniform float uProgress;
   uniform float uTime;
   uniform float uPixelRatio;
+  uniform vec2 uMouse;
 
   attribute vec3 aExpandedPos;
   attribute vec3 aTarget;
@@ -125,6 +126,38 @@ const vertexShader = /* glsl */ `
     warpedPos.z += warpArc * 60.0 * isDust;
     
     pos = mix(warpedPos, finalPos, settlement);
+
+    // ── DEEP SPACE CONTINUOUS DRIFT ──
+    // Slowly move background dust towards the camera continuously to simulate floating in space
+    if (isProductNode < 0.5 && settlement > 0.5) {
+      // Base speed: very slow so it's ambient
+      float driftSpeed = 3.0 * (settlement - 0.5) * 2.0; // Fade in drift speed after settlement
+      // Shift forward and wrap around from +20 back to -80 to create an infinite seamless tunnel
+      pos.z = mod(pos.z + uTime * driftSpeed + 80.0, 100.0) - 80.0;
+    }
+
+    // ── MOUSE GRAVITATIONAL PULL ──
+    if (isProductNode < 0.5 && settlement > 0.5) {
+      // Calculate approximate screen space depth to align mouse with world space
+      float depth = max(5.0, 25.0 - pos.z); 
+      vec2 mouseWorld = uMouse * (depth * 0.4); 
+      
+      vec2 dirToMouse = mouseWorld - pos.xy;
+      float distToMouse = length(dirToMouse);
+      
+      // Calculate a massive gravitational well around the mouse (increased from 18.0 to 45.0)
+      float pull = smoothstep(45.0, 0.0, distToMouse);
+      
+      // Pull particles massively towards the cursor (increased from 6.0 to 20.0)
+      // We also use a nonlinear curve for the pull so the core is very dense
+      float strongPull = pow(pull, 1.5) * 20.0;
+      
+      vec2 pullVec = normalize(dirToMouse) * strongPull;
+      vec2 swirlVec = vec2(-dirToMouse.y, dirToMouse.x) * pull * 0.3;
+      
+      pos.xy += pullVec + swirlVec;
+      pos.z += pull * 8.0; // Bulge them forward significantly!
+    }
 
     // Gentle floating in final state
     float floatStrength = settlement * 0.15;
@@ -250,8 +283,8 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
       // 2. Expanded Galaxy State (Structured 3-arm spiral)
       const arm = Math.floor(Math.random() * 3);
       const angle = Math.random() * Math.PI * 2;
-      // Much larger radius to fill screen
-      const radius = 0.5 + Math.pow(Math.random(), 2.0) * 25.0; 
+      // Much larger radius to fill screen edges
+      const radius = 0.5 + Math.pow(Math.random(), 2.0) * 40.0; 
       const spinAngle = angle + radius * 0.4 + arm * ((Math.PI * 2) / 3);
       
       const armOffset = (Math.random() - 0.5) * 3.0;
@@ -285,8 +318,8 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
         isProduct[i]      = 0.0;
       } else {
         // Ambient background dust final targets: infinite deep starry tunnel
-        // Uniform circular distribution inside a radius of 20, keeping a hollow core of 3
-        const tunnelRadius = 3.0 + Math.sqrt(Math.random()) * 20.0; 
+        // Uniform circular distribution inside a radius of 40, keeping a hollow core of 3
+        const tunnelRadius = 3.0 + Math.sqrt(Math.random()) * 40.0; 
         const tunnelAngle = Math.random() * Math.PI * 2;
         // Uniformly distribute stars along the Z-axis safely to -70
         const tunnelZ = 10.0 - Math.random() * 80.0; 
@@ -341,6 +374,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
     uProgress:   { value: 0 },
     uTime:       { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+    uMouse:      { value: new THREE.Vector2(0, 0) },
   }), []);
 
   // Animation loop
@@ -350,6 +384,14 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
     if (materialRef.current) {
       materialRef.current.uniforms.uProgress.value = smoothProgress.current;
       materialRef.current.uniforms.uTime.value += delta;
+      
+      // Calculate mouse with a bit more smoothing for the gravity feel
+      smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
+      smoothMouse.current.y += (mouseRef.current.y - smoothMouse.current.y) * (1 - Math.exp(-4 * delta));
+      
+      // Pass the current smooth mouse to the shader for the gravitational pull
+      // Y is inverted because screen space Y is down, WebGL Y is up
+      materialRef.current.uniforms.uMouse.value.set(smoothMouse.current.x, -smoothMouse.current.y);
     }
 
     // Apply parallax to the entire group
@@ -480,31 +522,98 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
     let targetPos = new THREE.Vector3(0, 0, baseZ);
     let targetLook = new THREE.Vector3(0, 0, 0);
 
-    if (activeProductIndexRef && activeProductIndexRef.current !== null && activeProductIndexRef.current >= 0 && activeProductIndexRef.current < productToPlanetMap.length) {
-      const p = PRODUCT_NODES[productToPlanetMap[activeProductIndexRef.current]];
+    if (activeProductIndexRef && activeProductIndexRef.current !== null) {
+      const idx = activeProductIndexRef.current;
       
-      const currentAngle = p.startAngle + clock.elapsedTime * p.speed;
-      const px = Math.cos(currentAngle) * p.radius;
-      const py = Math.sin(currentAngle) * p.radius * 0.15;
-      const pz = Math.sin(currentAngle) * p.radius;
-      
-      const pos = new THREE.Vector3(px, py, pz);
-      
-      // Apply the same global scene rotation to accurately find the planet's world coordinates
-      const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
-      const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
-      const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
-      const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
-      
-      const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
-      pos.applyEuler(euler);
-      
-      // Look directly at the planet
-      targetLook.copy(pos);
-      
-      // Position camera slightly offset (in screen space) so the planet appears behind the card
-      const offset = new THREE.Vector3(0, 0.5, 3.0);
-      targetPos.copy(pos).add(offset);
+      if (idx < 0) {
+        // Interpolate between solar system and planet 0
+        const t = Math.max(0, idx + 1); // 0 to 1
+        
+        const p0 = PRODUCT_NODES[productToPlanetMap[0]];
+        const angle0 = p0.startAngle + clock.elapsedTime * p0.speed;
+        const pos0 = new THREE.Vector3(
+          Math.cos(angle0) * p0.radius,
+          Math.sin(angle0) * p0.radius * 0.15,
+          Math.sin(angle0) * p0.radius
+        );
+        
+        const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
+        const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
+        const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
+        
+        pos0.applyEuler(euler);
+        
+        const planetLook = pos0.clone();
+        const planetPos = pos0.clone().add(new THREE.Vector3(0, 0.5, 3.0));
+        
+        targetLook.lerp(planetLook, t);
+        targetPos.lerp(planetPos, t);
+
+      } else if (idx > productToPlanetMap.length - 1) {
+        // Interpolate between last planet and solar system (zooming out)
+        const t = Math.max(0, 1 - (idx - (productToPlanetMap.length - 1))); // 1 to 0
+        
+        const lastIdx = productToPlanetMap.length - 1;
+        const p1 = PRODUCT_NODES[productToPlanetMap[lastIdx]];
+        const angle1 = p1.startAngle + clock.elapsedTime * p1.speed;
+        const pos1 = new THREE.Vector3(
+          Math.cos(angle1) * p1.radius,
+          Math.sin(angle1) * p1.radius * 0.15,
+          Math.sin(angle1) * p1.radius
+        );
+        
+        const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
+        const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
+        const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
+        
+        pos1.applyEuler(euler);
+        
+        const planetLook = pos1.clone();
+        const planetPos = pos1.clone().add(new THREE.Vector3(0, 0.5, 3.0));
+        
+        targetLook.lerp(planetLook, t);
+        targetPos.lerp(planetPos, t);
+        
+      } else {
+        // Normal interpolation between planets
+        const index0 = Math.floor(idx);
+        const index1 = Math.min(index0 + 1, productToPlanetMap.length - 1);
+        const t = idx - index0;
+        
+        const p0 = PRODUCT_NODES[productToPlanetMap[index0]];
+        const p1 = PRODUCT_NODES[productToPlanetMap[index1]];
+        
+        const angle0 = p0.startAngle + clock.elapsedTime * p0.speed;
+        const pos0 = new THREE.Vector3(
+          Math.cos(angle0) * p0.radius,
+          Math.sin(angle0) * p0.radius * 0.15,
+          Math.sin(angle0) * p0.radius
+        );
+        
+        const angle1 = p1.startAngle + clock.elapsedTime * p1.speed;
+        const pos1 = new THREE.Vector3(
+          Math.cos(angle1) * p1.radius,
+          Math.sin(angle1) * p1.radius * 0.15,
+          Math.sin(angle1) * p1.radius
+        );
+        
+        const pos = new THREE.Vector3().lerpVectors(pos0, pos1, t);
+        
+        const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
+        const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02);
+        const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
+        const rz = smoothProgress.current * 0.5 + (Date.now() % 100000) * 0.00005;
+        
+        const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
+        pos.applyEuler(euler);
+        
+        targetLook.copy(pos);
+        targetPos.copy(pos).add(new THREE.Vector3(0, 0.5, 3.0));
+      }
     }
 
     // Smoothly interpolate camera
@@ -529,17 +638,32 @@ interface ParticleFieldProps {
 export default function ParticleField({ progressRef, activeProductIndexRef, className }: ParticleFieldProps) {
   const mouseRef = useRef({ x: 0, y: 0 });
 
-  // Track mouse for parallax effect
+  // Track mouse and touch for parallax and gravity effects
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      // Normalize mouse to -1 to +1 range
+    const updatePosition = (clientX: number, clientY: number) => {
       mouseRef.current = {
-        x: (e.clientX / window.innerWidth) * 2 - 1,
-        y: (e.clientY / window.innerHeight) * 2 - 1,
+        x: (clientX / window.innerWidth) * 2 - 1,
+        y: (clientY / window.innerHeight) * 2 - 1,
       };
     };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      updatePosition(e.clientX, e.clientY);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updatePosition(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
   }, []);
 
   return (
@@ -565,8 +689,8 @@ export default function ParticleField({ progressRef, activeProductIndexRef, clas
         }}
         style={{ background: '#05060A' }}
       >
-        {/* Subtle global fog to fade out distant particles */}
-        <fog attach="fog" args={['#05060A', 3, 25]} />
+        {/* Cinematic depth of field via fog to slowly fade out extremely distant particles */}
+        <fog attach="fog" args={['#05060A', 15, 90]} />
         
         <CameraController progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} mouseRef={mouseRef} />
         <Particles progressRef={progressRef} mouseRef={mouseRef} />

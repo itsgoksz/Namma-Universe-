@@ -14,6 +14,7 @@ import ParticleField from '../components/ParticleField';
 export default function WelloraProductPage() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const progressRef = useRef(1); // Set to 1 to show the fully formed Constellation/Solar System
+  const activeProductIndexRef = useRef<number | null>(1); // Wellora is index 1
 
   // Scroll to top on mount
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function WelloraProductPage() {
     <div className="relative min-h-screen selection:bg-[var(--color-accent)] selection:text-[#120B0F]" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
       {/* Background WebGL / Particle Effect */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
-        <ParticleField progressRef={progressRef} />
+        <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
       </div>
 
       <motion.div 

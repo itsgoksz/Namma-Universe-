@@ -10,8 +10,9 @@
  *   EV Copilot → Electric blue motion
  */
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useRef, useEffect } from 'react';
 
 interface ProductWorld {
   id: string;
@@ -91,6 +92,83 @@ const worlds: ProductWorld[] = [
 
 export default function ProductWorlds({ activeProductIndexRef }: { activeProductIndexRef?: React.MutableRefObject<number | null> }) {
   const navigate = useNavigate();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Mathematically perfect tracker that calculates exact float index based on card centers
+  useEffect(() => {
+    let animationFrameId: number;
+    
+    const updateIndex = () => {
+      if (!containerRef.current || !activeProductIndexRef) return;
+      
+      const cards = containerRef.current.children;
+      if (cards.length < worlds.length) {
+        animationFrameId = requestAnimationFrame(updateIndex);
+        return;
+      }
+
+      const centerY = window.innerHeight / 2;
+      const centers: number[] = [];
+      
+      // Get the absolute center of each card
+      for (let i = 0; i < worlds.length; i++) {
+        const rect = cards[i].getBoundingClientRect();
+        centers.push(rect.top + rect.height / 2);
+      }
+      
+      // Check if we are totally above or below the container
+      const firstCardTop = cards[0].getBoundingClientRect().top;
+      const lastCardBottom = cards[worlds.length - 1].getBoundingClientRect().bottom;
+      
+      const vh = window.innerHeight;
+      
+      if (firstCardTop > vh * 0.8) {
+        // Entering from the top (scrolling down into the section, or up out of it)
+        // firstCardTop goes from ~100vh down to 50vh. We map this to t=0 (-1 idx) to t=1 (0 idx).
+        let t = 1 - ((firstCardTop - vh * 0.5) / (vh * 0.3));
+        t = Math.max(0, Math.min(1, t));
+        
+        if (t === 0) {
+          activeProductIndexRef.current = null;
+        } else {
+          activeProductIndexRef.current = t - 1; // -1 to 0
+        }
+      } else if (lastCardBottom < vh * 0.2) {
+        // Leaving from the bottom
+        // lastCardBottom goes from 50vh down to 0vh. We map this to t=0 (maxIdx) to t=1 (maxIdx + 1).
+        let t = (vh * 0.5 - lastCardBottom) / (vh * 0.3);
+        t = Math.max(0, Math.min(1, t));
+        
+        if (t === 1) {
+          activeProductIndexRef.current = null;
+        } else {
+          activeProductIndexRef.current = (worlds.length - 1) + t;
+        }
+      } else {
+        // Calculate the exact float index
+        if (centerY <= centers[0]) {
+          activeProductIndexRef.current = 0;
+        } else if (centerY >= centers[worlds.length - 1]) {
+          activeProductIndexRef.current = worlds.length - 1;
+        } else {
+          // Find which two cards the center is between
+          for (let i = 0; i < worlds.length - 1; i++) {
+            if (centerY >= centers[i] && centerY <= centers[i + 1]) {
+              const distance = centers[i + 1] - centers[i];
+              const progress = (centerY - centers[i]) / distance;
+              activeProductIndexRef.current = i + progress;
+              break;
+            }
+          }
+        }
+      }
+      
+      animationFrameId = requestAnimationFrame(updateIndex);
+    };
+    
+    updateIndex();
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [activeProductIndexRef]);
 
   return (
     <section
@@ -124,6 +202,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
       </motion.div>
 
       <div
+        ref={containerRef}
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
@@ -138,14 +217,6 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
-            onViewportEnter={() => {
-              if (activeProductIndexRef) activeProductIndexRef.current = index;
-            }}
-            onViewportLeave={() => {
-              if (activeProductIndexRef && activeProductIndexRef.current === index) {
-                activeProductIndexRef.current = null;
-              }
-            }}
             transition={{ duration: 0.8, delay: 0.1 }}
             whileHover={world.available ? { scale: 1.01, y: -2 } : {}}
             onClick={() => { if (world.available) navigate(world.route); }}

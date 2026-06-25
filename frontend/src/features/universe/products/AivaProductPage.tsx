@@ -24,6 +24,7 @@ import ParticleField from '../components/ParticleField';
 export default function AivaProductPage() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const progressRef = useRef(1); // Set to 1 to show the fully formed Constellation/Solar System
+  const activeProductIndexRef = useRef<number | null>(0); // Aiva is index 0
 
   // Scroll to top on mount
   useEffect(() => {
@@ -51,7 +52,7 @@ export default function AivaProductPage() {
     >
       {/* Cinematic WebGL Background */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <ParticleField progressRef={progressRef} />
+        <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
       </div>
 
       {/* Foreground Content */}

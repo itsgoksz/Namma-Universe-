@@ -5,6 +5,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import EchoHeroSection from './echo/components/EchoHeroSection';
@@ -21,17 +22,18 @@ import ParticleField from '../components/ParticleField';
 export default function EchoProductPage() {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const progressRef = useRef(1); // Set to 1 to show the fully formed Constellation/Solar System
+  const activeProductIndexRef = useRef<number | null>(2); // Echo is index 2
 
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Override global colors for Echo (Cyan)
+    // Override global colors for Echo (Cyan/Blue influences)
     document.documentElement.style.setProperty('--color-accent', '#2DD4FF');
     document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(45, 212, 255, 0.15)');
-    document.documentElement.style.setProperty('--color-bg-primary', 'rgba(5, 10, 14, 0.85)');
-    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(6, 11, 16, 0.85)');
-    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(10, 17, 24, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-primary', 'rgba(4, 15, 18, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-secondary', 'rgba(4, 15, 18, 0.85)');
+    document.documentElement.style.setProperty('--color-bg-tertiary', 'rgba(5, 18, 22, 0.85)');
 
     return () => {
       // Revert to default/Aiva on unmount
@@ -43,19 +45,14 @@ export default function EchoProductPage() {
     };
   }, []);
 
+  const { scrollYProgress } = useScroll();
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
+
   return (
-    <div
-      style={{
-        minHeight: '100dvh',
-        width: '100%',
-        overflowX: 'hidden',
-        position: 'relative',
-        background: 'transparent',
-      } as React.CSSProperties}
-    >
-      {/* Cinematic WebGL Background */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <ParticleField progressRef={progressRef} />
+    <div className="relative min-h-screen selection:bg-[var(--color-accent)] selection:text-[#120B0F]" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
+      {/* Background WebGL / Particle Effect */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
+        <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
       </div>
 
       {/* Foreground Content */}
