@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
-import { UserHeart, TrendingUp, ShieldCheck, Database } from 'lucide-react';
+import { Heart, TrendingUp, ShieldCheck, Database } from 'lucide-react';
 
 const propositions = [
   {
-    icon: <UserHeart className="w-8 h-8" />,
+    icon: <Heart className="w-8 h-8" />,
     title: "For the Everyday User",
     benefits: [
       "Zero-Effort Habit Building: Interruptible dialogue state tracking remembers preferences like 'my usual coffee' so you never repeat yourself.",

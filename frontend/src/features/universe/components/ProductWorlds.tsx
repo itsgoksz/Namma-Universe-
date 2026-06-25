@@ -64,18 +64,6 @@ const worlds: ProductWorld[] = [
     available: true,
   },
   {
-    id: 'homie',
-    name: 'Homie',
-    emoji: '🏠',
-    tagline: 'An intelligent home companion that learns how you live and quietly simplifies it.',
-    description: 'Homie observes your patterns, anticipates your needs, and automates the invisible friction of daily life at home — from energy to errands.',
-    color: '#F5A623',
-    gradientFrom: 'rgba(245, 166, 35, 0.12)',
-    gradientTo: 'rgba(245, 166, 35, 0.02)',
-    route: '#',
-    available: false,
-  },
-  {
     id: 'ev-copilot',
     name: 'EV Copilot',
     emoji: '⚡',
@@ -86,6 +74,18 @@ const worlds: ProductWorld[] = [
     gradientTo: 'rgba(109, 94, 247, 0.02)',
     route: '/products/ev-copilot',
     available: true,
+  },
+  {
+    id: 'homie',
+    name: 'Homie',
+    emoji: '🏠',
+    tagline: 'An intelligent home companion that learns how you live and quietly simplifies it.',
+    description: 'Homie observes your patterns, anticipates your needs, and automates the invisible friction of daily life at home — from energy to errands.',
+    color: '#F5A623',
+    gradientFrom: 'rgba(245, 166, 35, 0.12)',
+    gradientTo: 'rgba(245, 166, 35, 0.02)',
+    route: '#',
+    available: false,
   },
 ];
 
