@@ -46,7 +46,7 @@ const products: Product[] = [
     tagline: 'A voice-first memory layer that captures, understands, and responds to your world.',
     color: '#2DD4FF',
     glowColor: 'rgba(45, 212, 255, 0.25)',
-    route: '#',
+    route: '/products/echo',
   },
   {
     id: 'homie',

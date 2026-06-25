@@ -60,8 +60,8 @@ const worlds: ProductWorld[] = [
     color: '#2DD4FF',
     gradientFrom: 'rgba(45, 212, 255, 0.12)',
     gradientTo: 'rgba(45, 212, 255, 0.02)',
-    route: '#',
-    available: false,
+    route: '/products/echo',
+    available: true,
   },
   {
     id: 'homie',
