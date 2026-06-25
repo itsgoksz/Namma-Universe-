@@ -21,6 +21,7 @@ import NammaUniversePage from './features/universe/NammaUniversePage';
 import AivaProductPage from './features/universe/products/AivaProductPage';
 import EchoProductPage from './features/universe/products/EchoProductPage';
 import EvCopilotProductPage from './features/universe/products/EvCopilotProductPage';
+import WelloraProductPage from './features/universe/products/WelloraProductPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -60,6 +61,7 @@ function AppRoutes() {
       <Route path="/products/aiva" element={<AivaProductPage />} />
       <Route path="/products/echo" element={<EchoProductPage />} />
       <Route path="/products/ev-copilot" element={<EvCopilotProductPage />} />
+      <Route path="/products/wellora" element={<WelloraProductPage />} />
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 

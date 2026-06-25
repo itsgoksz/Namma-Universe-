@@ -37,7 +37,7 @@ const products: Product[] = [
     tagline: 'A quiet system that helps you understand and optimize your physical and mental wellbeing.',
     color: '#2ECC71',
     glowColor: 'rgba(46, 204, 113, 0.25)',
-    route: '#',
+    route: '/products/wellora',
   },
   {
     id: 'echo',
