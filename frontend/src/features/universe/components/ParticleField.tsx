@@ -303,21 +303,18 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
 
       phases[i] = Math.random();
 
-      // 2. Expanded Galaxy State (Structured 3-arm spiral)
-      const arm = Math.floor(Math.random() * 3);
-      const angle = Math.random() * Math.PI * 2;
-      // Massively increase clustering power (from 2.0 to 3.5) so the VAST majority of the 150k stars are packed 
-      // into an ultra-dense core, while the remaining stars still explode out to 100 radius to fill the screen corners.
-      const radius = 0.5 + Math.pow(Math.random(), 3.5) * 100.0; 
-      const spinAngle = angle + radius * 0.4 + arm * ((Math.PI * 2) / 3);
+      // 2. Expanded Burst State (Volumetric Spherical Explosion)
+      // We use a true 3D spherical distribution to scatter evenly into all corners like a real explosion
+      const burstTheta = Math.random() * Math.PI * 2;
+      const burstPhi   = Math.acos(2 * Math.random() - 1);
       
-      const armOffset = (Math.random() - 0.5) * 3.0;
-      // Reduce vertical thickness slightly (from 40 to 25) to heavily compress the volume and intensify the burst density!
-      const thickness = (Math.random() - 0.5) * 25.0 * (1.0 - radius / 100.0);
-      
-      expandedPos[i * 3]     = Math.cos(spinAngle) * radius + armOffset;
-      expandedPos[i * 3 + 1] = thickness;
-      expandedPos[i * 3 + 2] = Math.sin(spinAngle) * radius + armOffset;
+      // Use a smoother clustering power (2.5) to keep a brilliant core, but guarantee a vast, even spread up to a 120-unit radius!
+      const burstRadius = 0.5 + Math.pow(Math.random(), 2.5) * 120.0; 
+
+      expandedPos[i * 3]     = burstRadius * Math.sin(burstPhi) * Math.cos(burstTheta);
+      // Very slight vertical squash (0.8) so it feels structured, but still vastly volumetric in all directions
+      expandedPos[i * 3 + 1] = burstRadius * Math.cos(burstPhi) * 0.8;
+      expandedPos[i * 3 + 2] = burstRadius * Math.sin(burstPhi) * Math.sin(burstTheta);
 
       if (i < PRODUCT_NODES.length) {
         // Product node final targets (orbit parameters)
