@@ -15,26 +15,24 @@ gsap.registerPlugin(ScrollTrigger);
 
 const slides = [
   {
-    text: 'Most companies build AI.',
+    text: 'Every technology begins as an idea.',
     color: 'rgba(255, 255, 255, 0.9)',
   },
   {
-    text: 'We build solutions.',
+    text: 'But ideas alone change nothing.',
     color: 'rgba(255, 255, 255, 0.9)',
   },
   {
-    text: 'We start with the problem.',
-    sub: 'Not the technology.',
+    text: 'They must solve something real.',
     color: 'rgba(255, 255, 255, 0.7)',
   },
   {
-    text: 'We obsess over people.',
-    sub: 'Their time. Their friction. Their unspoken needs.',
+    text: 'A frustration.',
+    sub: 'A delay. A missed opportunity.',
     color: 'rgba(255, 255, 255, 0.7)',
   },
   {
-    text: 'Then we apply intelligence.',
-    sub: 'AI is one tool. Not the whole answer.',
+    text: 'Intelligence is simply the bridge.',
     color: 'rgba(255, 255, 255, 0.7)',
   },
   {
@@ -42,7 +40,7 @@ const slides = [
     color: 'rgba(255, 255, 255, 0.35)',
   },
   {
-    text: 'Technology that acts\nin the real world.',
+    text: 'A better reality.',
     color: '#6D5EF7',
   },
 ];

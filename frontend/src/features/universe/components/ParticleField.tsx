@@ -8,7 +8,7 @@
  * - Interactive mouse parallax for deep spatial feel
  */
 
-import { useRef, useMemo, useEffect, Suspense } from 'react';
+import { useRef, useMemo, useEffect, Suspense, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -736,6 +736,17 @@ function SpaceshipCursorModel({ mouseRef }: { mouseRef: React.MutableRefObject<{
 }
 
 function SpaceshipCursor({ mouseRef }: { mouseRef: React.MutableRefObject<{ x: number, y: number }> }) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check immediately on mount
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isMobile) return null;
+
   return (
     <Suspense fallback={null}>
       <SpaceshipCursorModel mouseRef={mouseRef} />
