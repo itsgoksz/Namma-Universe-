@@ -93,6 +93,7 @@ export default function EchoProductPage() {
           >
             <ArrowLeft size={16} />
             <span
+              className="hidden sm:inline"
               style={{
                 fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                 fontWeight: 600,

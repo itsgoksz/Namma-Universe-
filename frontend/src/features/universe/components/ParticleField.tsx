@@ -15,7 +15,7 @@ import * as THREE from 'three';
 
 // ─── Constants ───────────────────────────────────────────────
 
-const PARTICLE_COUNT = 150000; // Colossal particle count to achieve extreme density during the volumetric burst
+const PARTICLE_COUNT = 180000; // Colossal particle count to achieve extreme density during the volumetric burst
 
 // Solar System Planets: 8 planets to maintain the full visual scale of the universe
 // We assign specific ones to our products below

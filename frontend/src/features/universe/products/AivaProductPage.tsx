@@ -93,6 +93,7 @@ export default function AivaProductPage() {
           >
             <ArrowLeft size={16} />
             <span
+              className="hidden sm:inline"
               style={{
                 fontFamily: "'Space Grotesk', 'Inter', sans-serif",
                 fontWeight: 600,
@@ -138,6 +139,7 @@ export default function AivaProductPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <Link
               to="/login"
+              className="hidden sm:inline"
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: '0.85rem',

@@ -68,7 +68,7 @@ export default function WelloraProductPage() {
                 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', letterSpacing: '0.05em' }}
               >
                 <span>←</span>
-                <span>NAMMA UNIVERSE</span>
+                <span className="hidden sm:inline">NAMMA UNIVERSE</span>
               </Link>
               <div className="h-4 w-px bg-[var(--color-border)]" />
               <div className="flex items-center gap-2">
