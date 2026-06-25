@@ -22,11 +22,17 @@ export default function WelloraProductPage() {
     // Override global colors for Wellora (Green & Teal influences)
     document.documentElement.style.setProperty('--color-accent', '#2ECC71');
     document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(46, 204, 113, 0.15)');
+    document.documentElement.style.setProperty('--color-bg-primary', '#0A0D0B');
+    document.documentElement.style.setProperty('--color-bg-secondary', '#0A0D0B');
+    document.documentElement.style.setProperty('--color-bg-tertiary', '#0C110E');
 
     return () => {
       // Revert to default/Aiva on unmount
       document.documentElement.style.setProperty('--color-accent', '#A66B8E');
       document.documentElement.style.setProperty('--color-accent-subtle', 'rgba(166, 107, 142, 0.15)');
+      document.documentElement.style.setProperty('--color-bg-primary', '#120B0F');
+      document.documentElement.style.setProperty('--color-bg-secondary', '#120B0F');
+      document.documentElement.style.setProperty('--color-bg-tertiary', '#140C11');
     };
   }, []);
 
@@ -52,7 +58,7 @@ export default function WelloraProductPage() {
       <div className="relative z-10 flex flex-col min-h-screen">
         
         {/* Transparent Navbar specific to Universe Products */}
-        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-border)] glass" style={{ backgroundColor: 'rgba(18, 11, 15, 0.5)', backdropFilter: 'blur(12px)' }}>
+        <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-border)] glass" style={{ backgroundColor: 'rgba(10, 13, 11, 0.5)', backdropFilter: 'blur(12px)' }}>
           <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-6">
               <Link
