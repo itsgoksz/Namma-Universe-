@@ -61,9 +61,15 @@ export default function PhilosophySection() {
           trigger: sectionRef.current,
           start: 'top top',
           end: `+=${slides.length * 150}%`, // Give it more scroll time for the cinematic scale
-          scrub: 1.5, // Smoother, heavier scrub
+          scrub: 1.0, // Smoother, faster scrub so snap is more responsive
           pin: true,
           anticipatePin: 1,
+          snap: {
+            snapTo: "labels", // Force the timeline to magnetically snap to our slide labels
+            duration: { min: 0.2, max: 0.5 },
+            delay: 0.05,
+            ease: "power2.inOut"
+          }
         },
       });
 
@@ -75,6 +81,11 @@ export default function PhilosophySection() {
         // Give each slide a dedicated "time window" in the scrub timeline
         const startTime = i * 3;
         
+        // Define the exact moment this slide is perfectly centered and legible
+        const peakVisibleTime = isFirst ? 0 : startTime + 1.5;
+        // Register this peak moment as a magnetic snap point!
+        tl.addLabel(`slide-${i}`, peakVisibleTime);
+        
         if (isFirst) {
           // First slide: already visible. Stays for a bit, then gets sucked forward
           tl.to(slide, { 
@@ -84,19 +95,18 @@ export default function PhilosophySection() {
             ease: 'power2.in'
           }, startTime + 1.0);
         } else {
-          // Deep focus pull: emerges from the abyss
+          // Deep focus pull: emerges from the abyss. 
+          // Removed `filter: blur()` because it causes massive scroll lag on Windows hardware!
           tl.fromTo(
             slide,
             { 
               opacity: 0, 
               scale: 0.2, 
-              filter: 'blur(20px)',
               y: 20 
             },
             { 
               opacity: 1, 
               scale: 1.0, 
-              filter: 'blur(0px)',
               y: 0, 
               duration: 1.5,
               ease: 'power2.out'
@@ -111,7 +121,7 @@ export default function PhilosophySection() {
               scale: 4.0, 
               duration: 1.5,
               ease: 'power2.in'
-            }, startTime + 2.0); // Start fading out only after it has been fully visible
+            }, startTime + 2.0); 
           } else {
             // The final statement lands and slowly breathes
             tl.to(slide, { 

@@ -39,6 +39,7 @@ const vertexShader = /* glsl */ `
   uniform float uProgress;
   uniform float uTime;
   uniform float uPixelRatio;
+  uniform float uHeight;
   uniform vec3 uRayOrigin;
   uniform vec3 uRayDir;
 
@@ -177,20 +178,24 @@ const vertexShader = /* glsl */ `
 
     vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
     
-    // SAFEGUARD: clamp the divisor so point sizes don't explode to Infinity when flying directly through particles
-    float sizeAttenuation = 180.0 / max(-mvPosition.z, 0.5);
+    // SAFEGUARD: clamp the divisor. 
+    // Instead of a hardcoded constant, calculate attenuation relative to screen height!
+    // This guarantees the visual size is a consistent percentage of the screen across ALL resolutions.
+    float sizeAttenuation = (uHeight * 0.12) / max(-mvPosition.z, 0.5);
     
     // Increase base size slightly (from 0.15 to 0.5) so they are more visible
     gl_PointSize = (aSize * 0.5) * pulse * sizeAttenuation * uPixelRatio;
     
     // Focus on the central sun and planets
     // Nodes are larger, Sun is massive
-    float targetSize = aSize * sizeAttenuation * uPixelRatio * 2.0;
-    targetSize = mix(targetSize, targetSize * 3.0, isSun);
+    float targetSize = aSize * sizeAttenuation * uPixelRatio * 1.5;
+    targetSize = mix(targetSize, targetSize * 4.0, isSun);
     gl_PointSize = mix(gl_PointSize, targetSize, isProductNode * settlement);
 
-    // SAFEGUARD: Hard clamp point size to prevent WebGL context crash
-    gl_PointSize = min(gl_PointSize, 2500.0);
+    // SAFEGUARD: Dynamic clamp based on screen height instead of an absolute 2500px!
+    // This prevents the sun from blowing out on low-res screens (1x pixel ratio Windows laptops)
+    // while allowing it to be huge on high-res retina displays.
+    gl_PointSize = min(gl_PointSize, uHeight * uPixelRatio * 1.8);
 
     gl_Position  = projectionMatrix * mvPosition;
 
@@ -391,6 +396,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
     uProgress:   { value: 0 },
     uTime:       { value: 0 },
     uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
+    uHeight:     { value: window.innerHeight },
     uRayOrigin:  { value: new THREE.Vector3() },
     uRayDir:     { value: new THREE.Vector3() },
   }), []);
@@ -402,6 +408,7 @@ function Particles({ progressRef, mouseRef }: ParticlesProps) {
     if (materialRef.current && groupRef.current) {
       materialRef.current.uniforms.uProgress.value = smoothProgress.current;
       materialRef.current.uniforms.uTime.value += delta;
+      materialRef.current.uniforms.uHeight.value = window.innerHeight;
       
       // Calculate mouse with a bit more smoothing for the gravity feel
       smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
