@@ -131,8 +131,8 @@ export default function WelloraDemoModal({ isOpen, onClose }: WelloraDemoModalPr
                       <input
                         type="text"
                         required
-                        pattern="[A-Za-z\s\-]{2,}"
-                        title="Please enter a valid name (minimum 2 characters)"
+                        pattern="[A-Za-z\s]{4,}"
+                        title="Please enter a valid name (letters only, minimum 4 characters)"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="John Doe"
@@ -145,6 +145,8 @@ export default function WelloraDemoModal({ isOpen, onClose }: WelloraDemoModalPr
                       <input
                         type="email"
                         required
+                        pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                        title="Please enter a valid email address"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="john@example.com"
@@ -154,17 +156,29 @@ export default function WelloraDemoModal({ isOpen, onClose }: WelloraDemoModalPr
                     </div>
                     <div>
                       <label className="block text-sm mb-1" style={{ color: 'var(--color-text-secondary)' }}>Phone Number</label>
-                      <input
-                        type="tel"
-                        required
-                        pattern="[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}"
-                        title="Please enter a valid phone number (e.g. +1 555-000-0000)"
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        placeholder="+1 (555) 000-0000"
-                        className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-                        style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
-                      />
+                      <div className="flex">
+                        <span 
+                          className="inline-flex items-center px-4 py-3 rounded-l-xl border border-r-0 font-medium" 
+                          style={{ backgroundColor: 'var(--color-bg-tertiary)', borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)' }}
+                        >
+                          +91
+                        </span>
+                        <input
+                          type="tel"
+                          required
+                          pattern="[0-9]{10}"
+                          maxLength={10}
+                          title="Please enter exactly 10 numeric digits"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '');
+                            if (val.length <= 10) setFormData({ ...formData, phone: val });
+                          }}
+                          placeholder="0000000000"
+                          className="w-full px-4 py-3 rounded-r-xl border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+                          style={{ backgroundColor: 'var(--color-bg-secondary)', borderColor: 'var(--color-border)', color: 'var(--color-text-primary)' }}
+                        />
+                      </div>
                     </div>
 
                     <button
