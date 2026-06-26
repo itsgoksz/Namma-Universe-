@@ -51,6 +51,7 @@ const vertexShader = /* glsl */ `
   uniform vec3 uRayDir;
 
   attribute vec3 aExpandedPos;
+  attribute vec3 aGalaxyPos;
   attribute vec3 aTarget;
   attribute float aSize;
   attribute float aPhase;
@@ -75,8 +76,9 @@ const vertexShader = /* glsl */ `
 
     // Phase progress values (each 0→1 within its range)
     float fadeIn        = smoothstep(0.0, 0.08, uProgress);
-    float expansion     = easeOutCubic(smoothstep(0.12, 0.45, uProgress));
-    float settlement    = easeInOutQuart(smoothstep(0.40, 0.70, uProgress));
+    float expansion     = easeOutCubic(smoothstep(0.12, 0.35, uProgress));
+    float galaxyForm    = easeInOutQuart(smoothstep(0.35, 0.55, uProgress));
+    float settlement    = easeInOutQuart(smoothstep(0.55, 0.85, uProgress));
 
     // ── Singularity: tight cluster at origin ──
     vec3 singularityPos = position * 0.002;
@@ -95,6 +97,18 @@ const vertexShader = /* glsl */ `
       expandedPos.x * c - expandedPos.z * s,
       expandedPos.y,
       expandedPos.x * s + expandedPos.z * c
+    );
+
+    // ── Milky Way: Spiral structure ──
+    vec3 galaxyPos = aGalaxyPos;
+    // We rotate the milky way faster than the expanded dust for a majestic swirling effect
+    float mwAngle = uTime * 0.25;
+    float mws = sin(mwAngle);
+    float mwc = cos(mwAngle);
+    vec3 rotatedGalaxyPos = vec3(
+      galaxyPos.x * mwc - galaxyPos.z * mws,
+      galaxyPos.y,
+      galaxyPos.x * mws + galaxyPos.z * mwc
     );
 
     // ── Solar System: final target positions ──
@@ -119,6 +133,7 @@ const vertexShader = /* glsl */ `
 
     // ── Interpolate through phases ──
     vec3 pos = mix(singularityPos, rotatedExpandedPos, expansion);
+    pos = mix(pos, rotatedGalaxyPos, galaxyForm);
     
     // ── WARP TUNNEL EFFECT ──
     // Instead of a flat chaotic scatter, we force the galaxy dust to burst radially OUTWARD
@@ -272,12 +287,13 @@ function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesPr
   const smoothMouse = useRef({ x: 0, y: 0 });
 
   // Force geometry rebuild on HMR
-  const GEOMETRY_VERSION = 9;
+  const GEOMETRY_VERSION = 10;
 
   // Pre-compute particle geometry data
   const { geometry } = useMemo(() => {
     const positions   = new Float32Array(PARTICLE_COUNT * 3);
     const expandedPos = new Float32Array(PARTICLE_COUNT * 3);
+    const galaxyPos   = new Float32Array(PARTICLE_COUNT * 3);
     const targets     = new Float32Array(PARTICLE_COUNT * 3);
     const sizes       = new Float32Array(PARTICLE_COUNT);
     const phases      = new Float32Array(PARTICLE_COUNT);
@@ -318,6 +334,53 @@ function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesPr
       // Very slight vertical squash (0.8) so it feels structured, but still vastly volumetric in all directions
       expandedPos[i * 3 + 1] = burstRadius * Math.cos(burstPhi) * 0.8;
       expandedPos[i * 3 + 2] = burstRadius * Math.sin(burstPhi) * Math.sin(burstTheta);
+
+      // --- 2.5. MILKY WAY GALAXY PHASE ---
+      const isCoreGalaxy = Math.random() < 0.35; // 35% forms the dense galactic core
+      
+      let gx, gy, gz;
+      
+      if (isCoreGalaxy) {
+        // Spherical/Ellipsoidal dense core
+        const coreRadius = Math.pow(Math.random(), 2.0) * 15.0; // Dense core radius ~15
+        const coreTheta = Math.random() * Math.PI * 2;
+        const corePhi = Math.acos(2 * Math.random() - 1);
+        gx = coreRadius * Math.sin(corePhi) * Math.cos(coreTheta);
+        gy = coreRadius * Math.cos(corePhi) * 0.7; // slightly squashed Y
+        gz = coreRadius * Math.sin(corePhi) * Math.sin(coreTheta);
+      } else {
+        // Spiral arms
+        const numArms = 2; // Two main spiral arms
+        const armIndex = Math.floor(Math.random() * numArms);
+        const armOffset = (armIndex * Math.PI * 2) / numArms;
+        
+        // Distance from center (10 to 110)
+        const radius = 10.0 + Math.pow(Math.random(), 1.5) * 100.0;
+        
+        // Spiral winding (further out = more twisted)
+        const winding = 3.5; // Number of twists
+        const theta = (radius / 110.0) * Math.PI * winding + armOffset;
+        
+        // Scatter increases with radius
+        const scatterRange = 10.0 * (radius / 110.0) + 3.0;
+        const scatterX = (Math.random() - 0.5) * scatterRange;
+        const scatterZ = (Math.random() - 0.5) * scatterRange;
+        const scatterY = (Math.random() - 0.5) * (3.0 + radius * 0.05); // Thin Y profile
+        
+        gx = radius * Math.cos(theta) + scatterX;
+        gy = scatterY;
+        gz = radius * Math.sin(theta) + scatterZ;
+      }
+      
+      // Tilt the entire galaxy slightly (approx 25 degrees) so it looks majestic in 3D
+      const tiltAngle = Math.PI * 0.14;
+      const cosTilt = Math.cos(tiltAngle);
+      const sinTilt = Math.sin(tiltAngle);
+      
+      galaxyPos[i * 3]     = gx;
+      galaxyPos[i * 3 + 1] = gy * cosTilt - gz * sinTilt;
+      galaxyPos[i * 3 + 2] = gy * sinTilt + gz * cosTilt;
+      // ------------------------------------
 
       if (i < PRODUCT_NODES.length) {
         // Product node final targets (orbit parameters)
@@ -397,6 +460,7 @@ function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesPr
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geo.setAttribute('aExpandedPos', new THREE.BufferAttribute(expandedPos, 3));
+    geo.setAttribute('aGalaxyPos', new THREE.BufferAttribute(galaxyPos, 3));
     geo.setAttribute('aTarget',  new THREE.BufferAttribute(targets, 3));
     geo.setAttribute('aSize',    new THREE.BufferAttribute(sizes, 1));
     geo.setAttribute('aPhase',   new THREE.BufferAttribute(phases, 1));
