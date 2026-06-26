@@ -826,13 +826,9 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
       }
 
       if (activeProductIndexRef && activeProductIndexRef.current !== null) {
-        if (sharedState.isZoomingInto) {
-          targetPos.copy(targetLook).add(new THREE.Vector3(0, 0, 0.05));
-        } else {
-          const panOffset = new THREE.Vector3(0.22, 0, 0);
-          targetLook.add(panOffset);
-          targetPos.add(panOffset);
-        }
+        const panOffset = new THREE.Vector3(0.22, 0, 0);
+        targetLook.add(panOffset);
+        targetPos.add(panOffset);
       }
     }
 
@@ -896,8 +892,8 @@ function SpaceshipCursorModel({ mouseRef }: { mouseRef: React.MutableRefObject<{
   return (
     <group ref={shipRef}>
       <mesh>
-        {/* Flat plane sized to the requested small probe size */}
-        <planeGeometry args={[0.5, 0.5]} />
+        {/* Flat plane sized to match the 2:1 aspect ratio of the new 800x400 image */}
+        <planeGeometry args={[0.6, 0.3]} />
         <meshBasicMaterial 
           map={texture} 
           transparent={true} 

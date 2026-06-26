@@ -54,6 +54,18 @@ export default function NammaUniversePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Handle hash scrolling on return
+  useEffect(() => {
+    if (window.location.hash === '#products') {
+      setTimeout(() => {
+        const el = document.getElementById('products');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, []);
+
   return (
     <div className="universe-cursor-none" style={{ background: '#05060A', minHeight: '100dvh', overflowX: 'hidden', width: '100%' }}>
       {/* Fixed Three.js Canvas */}

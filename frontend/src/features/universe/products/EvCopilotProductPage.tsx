@@ -43,6 +43,20 @@ export default function EvCopilotProductPage() {
 
   return (
     <div className="relative min-h-screen selection:bg-[var(--color-accent)] selection:text-white" style={{ backgroundColor: 'var(--color-bg-primary)', color: 'var(--color-text-primary)' }}>
+      {/* Seamless Transition Overlay */}
+      <motion.div
+        initial={{ clipPath: 'circle(150% at 50% 50%)' }}
+        animate={{ clipPath: 'circle(0% at 50% 50%)' }}
+        transition={{ duration: 0.8, ease: [0.7, 0, 0.3, 1] }}
+        style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 9999,
+          backgroundColor: '#6D5EF7',
+          pointerEvents: 'none'
+        }}
+      />
+
       {/* Background WebGL / Particle Effect */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
         <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
@@ -64,12 +78,12 @@ export default function EvCopilotProductPage() {
           <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-6">
               <Link
-                to="/"
+                to="/#products"
                 className="flex items-center gap-2 transition-opacity hover:opacity-80"
                 style={{ color: 'var(--color-text-secondary)', fontSize: '0.875rem', letterSpacing: '0.05em' }}
               >
                 <span>←</span>
-                <span className="hidden sm:inline">NAMMA UNIVERSE</span>
+                <span className="hidden sm:inline">PRODUCTS</span>
               </Link>
               <div className="h-4 w-px bg-[var(--color-border)]" />
               <div className="flex items-center gap-2">

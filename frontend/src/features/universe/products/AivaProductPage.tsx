@@ -50,6 +50,20 @@ export default function AivaProductPage() {
         '--color-bg-primary': 'rgba(18, 11, 15, 0.85)',
       } as React.CSSProperties}
     >
+      {/* Seamless Transition Overlay */}
+      <motion.div
+        initial={{ clipPath: 'circle(150% at 50% 50%)' }}
+        animate={{ clipPath: 'circle(0% at 50% 50%)' }}
+        transition={{ duration: 0.8, ease: [0.7, 0, 0.3, 1] }}
+        style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          zIndex: 9999,
+          backgroundColor: '#A66B8E',
+          pointerEvents: 'none'
+        }}
+      />
+
       {/* Cinematic WebGL Background */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
         <ParticleField progressRef={progressRef} activeProductIndexRef={activeProductIndexRef} />
@@ -76,7 +90,7 @@ export default function AivaProductPage() {
           }}
         >
           <Link
-            to="/"
+            to="/#products"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -103,7 +117,7 @@ export default function AivaProductPage() {
                 color: 'rgba(255, 255, 255, 0.3)',
               }}
             >
-              Namma Universe
+              PRODUCTS
             </span>
           </Link>
 

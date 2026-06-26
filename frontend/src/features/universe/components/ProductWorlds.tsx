@@ -10,7 +10,7 @@
  *   EV Copilot → Electric blue motion
  */
 
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useRef, useEffect, useState } from 'react';
 import { sharedState } from './ParticleField';
@@ -413,6 +413,23 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
           </motion.div>
         ))}
       </div>
+
+      <AnimatePresence>
+        {sharedState.isZoomingInto && (
+          <motion.div
+            initial={{ clipPath: 'circle(0% at 50% 50%)' }}
+            animate={{ clipPath: 'circle(150% at 50% 50%)' }}
+            transition={{ duration: 0.8, ease: [0.7, 0, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 9999,
+              backgroundColor: worlds.find(w => w.id === sharedState.isZoomingInto)?.color,
+              pointerEvents: 'none'
+            }}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
