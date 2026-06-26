@@ -9,6 +9,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
 import HeroSection from '../../landing/components/HeroSection';
 import ProblemSection from '../../landing/components/ProblemSection';
 import SolutionSection from '../../landing/components/SolutionSection';

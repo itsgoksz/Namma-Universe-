@@ -24,14 +24,14 @@ import { analyticsAPI } from '../../lib/api';
 import type { OverviewStats } from '../../types';
 
 const navItems = [
-  { path: '/', icon: LayoutDashboard, label: 'Overview' },
-  { path: '/appointments', icon: Calendar, label: 'Schedule' },
-  { path: '/customers', icon: Users, label: 'Clients' },
-  { path: '/staff', icon: UserCog, label: 'Team' },
+  { path: '/app', icon: LayoutDashboard, label: 'Overview' },
+  { path: '/app/appointments', icon: Calendar, label: 'Schedule' },
+  { path: '/app/customers', icon: Users, label: 'Clients' },
+  { path: '/app/staff', icon: UserCog, label: 'Team' },
   { divider: true },
-  { path: '/analytics', icon: BarChart3, label: 'Insights' },
-  { path: '/calls', icon: Phone, label: 'AI Calls' },
-  { path: '/settings', icon: Settings, label: 'Settings' },
+  { path: '/app/analytics', icon: BarChart3, label: 'Insights' },
+  { path: '/app/calls', icon: Phone, label: 'AI Calls' },
+  { path: '/app/settings', icon: Settings, label: 'Settings' },
 ];
 
 interface SidebarProps {
