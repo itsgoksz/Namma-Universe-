@@ -9,7 +9,7 @@ import EvCopilotValueProposition from './ev-copilot/components/EvCopilotValuePro
 import EvCopilotArchitecture from './ev-copilot/components/EvCopilotArchitecture';
 import EvCopilotFinalCTA from './ev-copilot/components/EvCopilotFinalCTA';
 import EvCopilotDemoModal from './ev-copilot/components/EvCopilotDemoModal';
-import Footer from '../../landing/components/Footer';
+import EvCopilotFooter from './ev-copilot/components/EvCopilotFooter';
 import ParticleField from '../components/ParticleField';
 
 export default function EvCopilotProductPage() {
@@ -129,7 +129,7 @@ export default function EvCopilotProductPage() {
           <EvCopilotFinalCTA onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
-        <Footer />
+        <EvCopilotFooter />
         <EvCopilotDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
       </div>
     </div>

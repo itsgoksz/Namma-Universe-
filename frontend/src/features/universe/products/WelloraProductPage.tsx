@@ -8,7 +8,7 @@ import WelloraValueProposition from './wellora/components/WelloraValuePropositio
 import WelloraArchitecture from './wellora/components/WelloraArchitecture';
 import WelloraFinalCTA from './wellora/components/WelloraFinalCTA';
 import WelloraDemoModal from './wellora/components/WelloraDemoModal';
-import Footer from '../../landing/components/Footer';
+import WelloraFooter from './wellora/components/WelloraFooter';
 import ParticleField from '../components/ParticleField';
 
 export default function WelloraProductPage() {
@@ -127,7 +127,7 @@ export default function WelloraProductPage() {
           <WelloraFinalCTA onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
-        <Footer />
+        <WelloraFooter />
         <WelloraDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
       </div>
     </div>

@@ -16,7 +16,7 @@ import EchoArchitecture from './echo/components/EchoArchitecture';
 import EchoSecuritySection from './echo/components/EchoSecuritySection';
 import EchoFinalCTASection from './echo/components/EchoFinalCTASection';
 import EchoDemoModal from './echo/components/EchoDemoModal';
-import Footer from '../../landing/components/Footer';
+import EchoFooter from './echo/components/EchoFooter';
 import ParticleField from '../components/ParticleField';
 
 export default function EchoProductPage() {
@@ -184,7 +184,7 @@ export default function EchoProductPage() {
           <EchoFinalCTASection onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
-        <Footer />
+        <EchoFooter />
         <EchoDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
       </div>
     </div>

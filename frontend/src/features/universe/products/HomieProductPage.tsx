@@ -7,7 +7,7 @@ import HomieSolutionSection from './homie/components/HomieSolutionSection';
 import HomieValueProposition from './homie/components/HomieValueProposition';
 import HomieFinalCTA from './homie/components/HomieFinalCTA';
 import HomieDemoModal from './homie/components/HomieDemoModal';
-import Footer from '../../landing/components/Footer';
+import HomieFooter from './homie/components/HomieFooter';
 import ParticleField from '../components/ParticleField';
 
 export default function HomieProductPage() {
@@ -126,7 +126,7 @@ export default function HomieProductPage() {
           <HomieFinalCTA onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
-        <Footer />
+        <HomieFooter />
         <HomieDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
       </div>
     </div>
