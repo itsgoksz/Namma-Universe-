@@ -21,17 +21,17 @@ const PARTICLE_COUNT = 180000; // Colossal particle count to achieve extreme den
 // We assign specific ones to our products below
 const PRODUCT_NODES = [
   { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 0.08, color: [0.44, 0.50, 0.56], size: 1.2 }, // 0: Mercury
-  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.8, 0.2, 0.6], size: 2.5 },  // 1: Venus (Aiva - Pink)
-  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.04, color: [0.2, 0.8, 0.4], size: 2.0 },  // 2: Earth (Wellora - Green)
+  { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.9, 0.2, 0.3], size: 2.5 },  // 1: Venus (Aiva - Pink)
+  { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.04, color: [0.05, 0.9, 0.1], size: 2.0 },  // 2: Earth (Wellora - Green)
   { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.03, color: [0.88, 0.44, 0.22], size: 1.5 }, // 3: Mars
-  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.015, color: [0.9, 0.7, 0.2], size: 4.0 },  // 4: Jupiter (Homie - Amber)
+  { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.015, color: [0.9, 0.5, 0.05], size: 4.0 },  // 4: Jupiter (Homie - Amber)
   { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.01, color: [0.93, 0.86, 0.51], size: 4.0 }, // 5: Saturn
-  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.008, color: [0.5, 0.2, 0.9], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
-  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.005, color: [0.1, 0.4, 0.9], size: 2.2 }, // 7: Neptune (Echo - Blue)
+  { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.008, color: [0.1, 0.0, 1.0], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
+  { radius: 10.5, startAngle: Math.random() * Math.PI * 2, speed: 0.005, color: [0.05, 0.3, 0.9], size: 2.2 }, // 7: Neptune (Echo - Blue)
 ];
 
 // Map Product Index (0-4) to Planet Index in PRODUCT_NODES
-const productToPlanetMap = [1, 2, 7, 6, 4];
+const productToPlanetMap = [1, 2, 6, 7, 4];
 
 // Global state for cross-route cinematic transitions
 export const sharedState = {

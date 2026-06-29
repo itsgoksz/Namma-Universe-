@@ -40,6 +40,15 @@ const products: Product[] = [
     route: '/products/wellora',
   },
   {
+    id: 'ev-copilot',
+    name: 'EV Copilot',
+    emoji: '⚡',
+    tagline: 'A real-time intelligence layer for EV routing, charging, and energy decisions.',
+    color: '#6D5EF7',
+    glowColor: 'rgba(109, 94, 247, 0.3)',
+    route: '/products/ev-copilot',
+  },
+  {
     id: 'echo',
     name: 'Echo',
     emoji: '🌾',
@@ -56,15 +65,6 @@ const products: Product[] = [
     color: '#F5A623',
     glowColor: 'rgba(245, 166, 35, 0.25)',
     route: '/products/homie',
-  },
-  {
-    id: 'ev-copilot',
-    name: 'EV Copilot',
-    emoji: '⚡',
-    tagline: 'A real-time intelligence layer for EV routing, charging, and energy decisions.',
-    color: '#6D5EF7',
-    glowColor: 'rgba(109, 94, 247, 0.3)',
-    route: '/products/ev-copilot',
   },
 ];
 
