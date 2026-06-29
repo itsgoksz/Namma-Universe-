@@ -6,6 +6,7 @@ import SolutionSection from './components/SolutionSection';
 import IndustriesSection from './components/IndustriesSection';
 import DayWithAivaSection from './components/DayWithAivaSection';
 import FeatureShowcase from './components/FeatureShowcase';
+import PricingSection from './components/PricingSection';
 import TestimonialsSection from './components/TestimonialsSection';
 import FinalCTASection from './components/FinalCTASection';
 import Footer from './components/Footer';
@@ -28,6 +29,7 @@ export default function LandingPage() {
         <IndustriesSection />
         <DayWithAivaSection />
         <FeatureShowcase />
+        <PricingSection />
         <TestimonialsSection />
         <FinalCTASection onOpenDemo={openDemoModal} />
       </main>

@@ -4,23 +4,23 @@ import { Sparkles, Battery, UtensilsCrossed, Database } from 'lucide-react';
 const features = [
   {
     icon: <Sparkles className="w-8 h-8" />,
-    title: "Proactive Intelligence",
-    description: "Car Co-Pilot doesn't just react; it anticipates. If the route includes steep elevations, the Vehicle Dynamics Engine calculates the increased battery consumption and automatically routes you to an earlier charger."
+    title: "Thinking Ahead",
+    description: "It doesn't just react; it anticipates. If there's a steep mountain pass ahead, it figures out you'll need more battery and gently reroutes you to an earlier charger."
   },
   {
     icon: <Battery className="w-8 h-8" />,
-    title: "Dynamic EV Battery Logic",
-    description: "Automatically inserts charging stops only when the battery threshold requires it, minimizing unnecessary downtime."
+    title: "Smart Battery Management",
+    description: "It only adds a charging stop when you actually need one, so you spend less time waiting and more time driving."
   },
   {
     icon: <UtensilsCrossed className="w-8 h-8" />,
-    title: "Context-Aware Amenities",
-    description: "Seamlessly pairs necessary charging stops with highly-rated restaurants matching your specific preferences."
+    title: "Amenities You Care About",
+    description: "It pairs your necessary charging stops with highly-rated restaurants that match exactly what you like to eat."
   },
   {
     icon: <Database className="w-8 h-8" />,
-    title: "Memory & Telemetry",
-    description: "Remembers driver preferences and stores trip history via SQLite databases, paving the way for predictive, highly personalized future trips."
+    title: "Learning Your Preferences",
+    description: "It remembers how you like to travel, making every future road trip feel more personalized and effortless."
   }
 ];
 

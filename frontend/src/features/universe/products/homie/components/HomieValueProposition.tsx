@@ -1,38 +1,40 @@
 import { motion } from 'framer-motion';
-import { User, Car, Globe } from 'lucide-react';
+import { ShieldCheck, Crosshair, HeartHandshake } from 'lucide-react';
 
 const propositions = [
   {
-    icon: <User className="w-8 h-8" />,
-    title: "For the EV Driver",
+    icon: <ShieldCheck className="w-8 h-8" />,
+    title: "Zero Brokers, Zero Spam",
     benefits: [
-      "Zero Range Anxiety: Drive with confidence knowing your route and battery needs are completely taken care of.",
-      "Time Savings: Skip the 30+ minutes usually spent cross-referencing maps, weather, and charging apps.",
-      "A VIP Experience: Enjoy a helpful, personalized briefing that caters exactly to your needs."
+      "No Middlemen: We aggregate and verify listings directly so you never have to deal with brokers.",
+      "Verified Accuracy: Stop worrying about fake photos and inaccurate pricing.",
+      "Complete Privacy: We protect your phone number from spam callers and endless WhatsApp groups."
     ]
   },
   {
-    icon: <Car className="w-8 h-8" />,
-    title: "For Automakers (OEMs)",
+    icon: <Crosshair className="w-8 h-8" />,
+    title: "Hyper-Personalized",
     benefits: [
-      "Next-Gen Infotainment: Integrates directly into a vehicle's native OS to provide a seamless, modern driving experience.",
-      "Brand Differentiation: Offering a proactive co-pilot transforms the vehicle into a helpful, evolving ecosystem."
+      "Custom Commutes: See exactly how long it takes to reach YOUR specific office desk.",
+      "Budget Precision: Detailed breakdowns of rent, deposits, and maintenance.",
+      "Lifestyle Matches: From vegan food options to gym proximity, we filter by what you care about."
     ]
   },
   {
-    icon: <Globe className="w-8 h-8" />,
-    title: "For the EV Ecosystem",
+    icon: <HeartHandshake className="w-8 h-8" />,
+    title: "Human-First Design",
     benefits: [
-      "Accelerates EV Adoption: Removes the friction and anxiety associated with long-distance EV travel.",
-      "Data-Driven Insights: Helps optimize charging station placements and infrastructure planning."
+      "Conversational Interface: Ask natural questions instead of toggling 50 confusing filters.",
+      "Premium Experience: A beautifully designed platform that feels calm and reassuring.",
+      "Unbiased Advice: We work for YOU, not the landlord or the property manager."
     ]
   }
 ];
 
-export default function EvCopilotValueProposition() {
+export default function HomieValueProposition() {
   return (
-    <section className="py-32 relative overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
-      <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
+    <section className="py-32 relative overflow-hidden" style={{ backgroundColor: 'var(--color-bg-secondary)' }}>
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-20">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -40,7 +42,7 @@ export default function EvCopilotValueProposition() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-bold mb-6"
           >
-            Value <span style={{ color: 'var(--color-accent)' }}>Proposition</span>
+            Why <span style={{ color: 'var(--color-accent)' }}>Homie?</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -50,7 +52,7 @@ export default function EvCopilotValueProposition() {
             className="text-xl"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            How Car Co-Pilot helps everyone in the EV ecosystem.
+            We don't just show you homes; we show you homes that fit your exact commute, budget, and lifestyle.
           </motion.p>
         </div>
 

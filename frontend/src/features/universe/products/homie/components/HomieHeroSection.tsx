@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
-import { BatteryCharging, Map, Utensils } from 'lucide-react';
+import { Home, MapPin, Navigation } from 'lucide-react';
 
-interface EvCopilotHeroSectionProps {
+interface HomieHeroSectionProps {
   onOpenDemo: () => void;
 }
 
-export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectionProps) {
+export default function HomieHeroSection({ onOpenDemo }: HomieHeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" style={{ backgroundColor: 'var(--color-bg-primary)' }}>
       {/* Background gradients */}
@@ -25,7 +25,7 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
             className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-border)] mb-6 glass"
           >
             <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-accent)' }}></span>
-            <span className="text-sm font-medium tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>MEET CAR CO-PILOT</span>
+            <span className="text-sm font-medium tracking-wide" style={{ color: 'var(--color-text-secondary)' }}>MEET HOMIE</span>
           </motion.div>
           
           <motion.h1
@@ -34,8 +34,8 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight"
           >
-            Your Co-Pilot for <br />
-            <span style={{ color: 'var(--color-accent)' }}>Road Trips</span>
+            The Ultimate <br />
+            <span style={{ color: 'var(--color-accent)' }}>Relocation Copilot</span>
           </motion.h1>
           
           <motion.p
@@ -45,7 +45,7 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
             className="text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            A thoughtful travel companion for EV drivers. It seamlessly plans your routes, handles charging schedules, remembers your dietary preferences, and monitors real-time traffic so you can just enjoy the drive.
+            Moving to a new city is one of the most exciting milestones in life—but the actual process is often chaotic, overwhelming, and exhausting. Homie changes all of that. We are your personal relocation advisor, real estate expert, and city onboarding assistant.
           </motion.p>
           
           <motion.div
@@ -56,16 +56,16 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <button
                 onClick={onOpenDemo}
-                className="px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto text-white shadow-lg"
+                className="px-8 py-4 rounded-xl font-semibold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto text-[#120B0F] shadow-lg"
                 style={{ backgroundColor: 'var(--color-accent)' }}
               >
-                Book a Demo
+                Start Your Move
               </button>
             </div>
           </motion.div>
         </div>
 
-        {/* Right Dashboard Mockup */}
+        {/* Right UI Mockup */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -83,11 +83,11 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
               className="flex items-start gap-4 p-4 rounded-2xl border border-[var(--color-border)] bg-black/20"
             >
               <div className="p-3 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-accent-subtle)' }}>
-                <Map className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
+                <Navigation className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Mountain Pass Ahead</h4>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Steep mountain pass ahead. I've noticed it might drain the battery faster, so I've updated our route to an earlier charger just to be safe.</p>
+                <h4 className="font-semibold text-white mb-1">Commute Intelligence</h4>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>You're working at Manyata Tech Park. I found a great flat in HRBR Layout—only 15 mins by bike.</p>
               </div>
             </motion.div>
 
@@ -99,11 +99,11 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
               className="flex items-start gap-4 p-4 rounded-2xl border border-[var(--color-border)] bg-black/20"
             >
               <div className="p-3 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-accent-subtle)' }}>
-                <BatteryCharging className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
+                <MapPin className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Optimal Charging Point</h4>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Arriving with 18% battery. I'm warming up the battery so we can charge quickly. We'll stop here for about 24 minutes.</p>
+                <h4 className="font-semibold text-white mb-1">Livability Score: 92/100</h4>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>This neighborhood is highly rated for safety and has excellent local food options nearby.</p>
               </div>
             </motion.div>
 
@@ -115,11 +115,11 @@ export default function EvCopilotHeroSection({ onOpenDemo }: EvCopilotHeroSectio
               className="flex items-start gap-4 p-4 rounded-2xl border border-[var(--color-border)] bg-black/20"
             >
               <div className="p-3 rounded-full shrink-0" style={{ backgroundColor: 'var(--color-accent-subtle)' }}>
-                <Utensils className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
+                <Home className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Dietary Match Found</h4>
-                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>There's a great vegetarian place just a short walk from the charger. I've reserved a table for us at 12:30 PM.</p>
+                <h4 className="font-semibold text-white mb-1">Property Match Found</h4>
+                <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>Private room under ₹12,000. Reliable Wi-Fi confirmed by 3 past tenants. Zero brokerage.</p>
               </div>
             </motion.div>
 

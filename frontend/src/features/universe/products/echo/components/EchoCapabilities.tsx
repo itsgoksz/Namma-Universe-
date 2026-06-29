@@ -3,8 +3,8 @@ import { Mic, Activity, Clock, CheckCircle2 } from 'lucide-react';
 
 const capabilities = [
   {
-    title: "Reactive Activities (User-Driven)",
-    description: "Directly query Echo via voice or text. The agent interprets the intent, updates the database, and responds immediately.",
+    title: "Help On Demand",
+    description: "Just ask Echo via voice or text. It understands what you need, takes care of the details, and responds instantly.",
     icon: <Mic className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />,
     features: [
       "Crop Management & Status Checks",
@@ -15,8 +15,8 @@ const capabilities = [
     ]
   },
   {
-    title: "Proactive Activities (System-Driven)",
-    description: "Echo operates a 24/7 background scheduler that actively monitors the farm without waiting for your prompts.",
+    title: "Always Working Behind the Scenes",
+    description: "Echo constantly monitors your farm's needs 24/7, taking care of routine tasks without you having to ask.",
     icon: <Activity className="w-6 h-6" style={{ color: 'var(--color-accent)' }} />,
     features: [
       "Continuous Weather Polling",
@@ -37,14 +37,14 @@ export default function EchoCapabilities() {
       <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-20">
           <div className="inline-flex items-center justify-center px-4 py-2 rounded-full mb-6 border border-[var(--color-border)]" style={{ background: 'var(--color-bg-tertiary)' }}>
-            <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Multi-Agent System</span>
+            <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>A Helping Hand</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             A synergistic <br />
-            <span className="text-gradient" style={{ backgroundImage: 'linear-gradient(to right, #2DD4FF, #6D5EF7)' }}>Dual-Brain Architecture.</span>
+            <span className="text-gradient" style={{ backgroundImage: 'linear-gradient(to right, #2DD4FF, #6D5EF7)' }}>way to work together.</span>
           </h2>
           <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-            Echo isn't just a chatbot. It seamlessly blends reactive command execution with autonomous system interruptions when critical conditions arise.
+            Echo isn't just a basic tool. It seamlessly blends responding to your direct questions with jumping in to handle critical conditions automatically.
           </p>
         </div>
 

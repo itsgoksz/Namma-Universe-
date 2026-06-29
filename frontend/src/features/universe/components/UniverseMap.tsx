@@ -52,10 +52,10 @@ const products: Product[] = [
     id: 'homie',
     name: 'Homie',
     emoji: '🏠',
-    tagline: 'An intelligent home companion that learns how you live and quietly simplifies it.',
+    tagline: 'The Ultimate Relocation Copilot for your next big move.',
     color: '#F5A623',
     glowColor: 'rgba(245, 166, 35, 0.25)',
-    route: '#',
+    route: '/products/homie',
   },
   {
     id: 'ev-copilot',

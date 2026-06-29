@@ -24,7 +24,7 @@ export default function EchoHeroSection({ onOpenDemo }: EchoHeroSectionProps) {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass border border-[var(--color-border)]" style={{ background: 'rgba(255, 255, 255, 0.03)' }}>
                 <Leaf className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
-                <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Echo: Farm AI Agent</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Echo: Your Farm Assistant</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
@@ -33,7 +33,7 @@ export default function EchoHeroSection({ onOpenDemo }: EchoHeroSectionProps) {
               </h1>
               
               <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto lg:mx-0 font-light" style={{ color: 'var(--color-text-secondary)' }}>
-                Echo is a comprehensive, autonomous AI assistant that tracks fields, monitors weather, schedules irrigation, and synthesizes daily reports—so you can focus on growing.
+                Echo is a reliable assistant that keeps an eye on your fields, monitors the weather, manages irrigation, and handles the daily reports—so you can focus on growing.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">

@@ -5,17 +5,17 @@ const problems = [
   {
     icon: <PenTool className="w-8 h-8" />,
     title: "Friction of Manual Tracking",
-    description: "Most apps require tedious manual input—searching for specific foods, estimating portions, and repeating this for every meal, sip of water, or hour of sleep."
+    description: "Most apps demand tedious manual input—forcing you to search for specific foods, guess portion sizes, and repeat this exhausting process every single day."
   },
   {
     icon: <HeartOff className="w-8 h-8" />,
-    title: "Lack of Emotional Intelligence",
-    description: "Existing platforms ignore emotional states. Logging comfort food after a stressful day often triggers red warnings, causing guilt and eventual app abandonment."
+    title: "No Empathy or Support",
+    description: "Apps don't care how you feel. Logging comfort food after a stressful day triggers red warnings and judgment, making you feel worse."
   },
   {
     icon: <LayoutDashboard className="w-8 h-8" />,
-    title: "Fragmented Wellness Data",
-    description: "Relying on separate tools to track nutrition, water intake, sleep, and mood prevents a holistic understanding of how your body truly functions."
+    title: "Scattered Health Data",
+    description: "Juggling separate apps to track nutrition, water, sleep, and mood makes it impossible to see the big picture of your health."
   },
   {
     icon: <SearchX className="w-8 h-8" />,
@@ -35,7 +35,7 @@ export default function WelloraProblemSection() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-bold mb-6"
           >
-            Wellness Tech is <span style={{ color: 'var(--color-accent)' }}>Broken</span>
+            Wellness Tracking is <span style={{ color: 'var(--color-accent)' }}>Broken</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +45,7 @@ export default function WelloraProblemSection() {
             className="text-xl"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Traditional diet and wellness tracking apps are clinical, tedious, and often induce guilt, leading to high user churn and fragmented data.
+            Traditional diet and wellness tracking apps feel clinical and tedious. They often induce guilt, which makes you want to stop using them altogether.
           </motion.p>
         </div>
 

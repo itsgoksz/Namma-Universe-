@@ -54,7 +54,7 @@ export default function LoginPage() {
 
           {/* Hero headline */}
           <h2 className="text-[40px] font-extrabold text-white leading-[1.15] tracking-tight mb-6">
-            Your AI receptionist
+            Your Front Desk Assistant
             <br />
             <span className="text-[#A66B8E]">that never sleeps</span>
           </h2>

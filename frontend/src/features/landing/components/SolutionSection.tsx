@@ -44,7 +44,7 @@ export default function SolutionSection() {
             <span className="text-gradient">star employee.</span>
           </h2>
           <p className="text-xl max-w-2xl mx-auto" style={{ color: 'var(--color-text-secondary)' }}>
-            Aiva is a comprehensive AI receptionist that handles the busywork so you can focus on the actual work.
+            Aiva is a comprehensive 24/7 Business Assistant that handles the busywork so you can focus on the actual work.
           </p>
         </div>
 

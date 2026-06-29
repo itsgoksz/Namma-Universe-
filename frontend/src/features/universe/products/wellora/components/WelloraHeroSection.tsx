@@ -34,7 +34,7 @@ export default function WelloraHeroSection({ onOpenDemo }: WelloraHeroSectionPro
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-5xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight"
           >
-            The Empathetic AI <br />
+            Your Personal <br />
             <span style={{ color: 'var(--color-accent)' }}>Wellness Companion</span>
           </motion.h1>
           
@@ -45,7 +45,7 @@ export default function WelloraHeroSection({ onOpenDemo }: WelloraHeroSectionPro
             className="text-lg lg:text-xl max-w-2xl mx-auto lg:mx-0 mb-10 leading-relaxed"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            A paradigm shift in digital health. Wellora transforms the chore of logging food, hydration, sleep, and mood into a natural, calming conversation.
+            Wellora transforms the chore of tracking food, hydration, sleep, and mood into a natural, calming conversation without any judgment.
           </motion.p>
           
           <motion.div

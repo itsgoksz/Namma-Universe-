@@ -67,7 +67,7 @@ export default function RegisterPage() {
           <h2 className="text-[40px] font-extrabold text-white leading-[1.15] tracking-tight mb-6">
             Set up your
             <br />
-            <span className="text-[#A66B8E]">AI receptionist</span>
+            <span className="text-[#A66B8E]">Business Assistant</span>
             <br />
             in 2 minutes
           </h2>
@@ -120,7 +120,7 @@ export default function RegisterPage() {
                 Create your account
               </h2>
               <p className="text-[13px] font-medium text-white/35">
-                Get started with your AI receptionist
+                Get started with your Always-Available Team Member
               </p>
             </div>
 

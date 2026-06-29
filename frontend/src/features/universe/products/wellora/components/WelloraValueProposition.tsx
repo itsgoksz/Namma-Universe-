@@ -6,16 +6,16 @@ const propositions = [
     icon: <Heart className="w-8 h-8" />,
     title: "For the Everyday User",
     benefits: [
-      "Zero-Effort Habit Building: Interruptible dialogue state tracking remembers preferences like 'my usual coffee' so you never repeat yourself.",
+      "Effortless Habit Building: Wellora remembers your preferences, like 'my usual coffee', so you never have to repeat yourself.",
       "Mental Peace: A calm persona ensures engaging with health metrics reduces anxiety rather than creating it.",
-      "Immediate Support: Get instant, empathetic, and scientifically accurate responses for late-night cravings or bad moods."
+      "Immediate Support: Get instant, empathetic, and helpful responses for late-night cravings or bad moods."
     ]
   },
   {
     icon: <TrendingUp className="w-8 h-8" />,
     title: "Unprecedented Retention",
     benefits: [
-      "Combats Churn: By removing friction and adding emotional empathy, Wellora directly targets the massive drop-off rates typical in Diet & Nutrition apps.",
+      "A Joy to Use: By removing friction and adding real empathy, Wellora turns health tracking from a chore into a daily moment of peace.",
       "Humanized Experience: Users stay because they feel understood and supported, not audited or judged."
     ]
   },
@@ -23,8 +23,8 @@ const propositions = [
     icon: <Database className="w-8 h-8" />,
     title: "Rich Data Moat",
     benefits: [
-      "Semantic Memory Models: Builds deep semantic and episodic memory models for each individual user.",
-      "Competitive Advantage: This proprietary dataset of highly personalized preferences and emotional triggers is something generic LLMs cannot easily replicate."
+      "Deep Personalization: Wellora truly gets to know you over time, remembering your unique habits and routines.",
+      "A Genuine Connection: This deep understanding of your personal preferences makes Wellora feel less like software and more like a real companion."
     ]
   }
 ];
@@ -56,7 +56,7 @@ export default function WelloraValueProposition() {
             className="text-xl"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            Value propositions for users, investors, and stakeholders.
+            Why people love using Wellora every day.
           </motion.p>
         </div>
 

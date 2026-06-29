@@ -4,23 +4,23 @@ import { Mic2, HeartHandshake, Layers, Sparkles } from 'lucide-react';
 const solutions = [
   {
     icon: <Mic2 className="w-6 h-6" />,
-    title: "Frictionless Voice & Text Logging",
-    description: "Simply speak naturally: 'I had two dosas and my usual coffee.' Wellora's orchestration pipeline instantly extracts the food, calculates the calories and macros, and logs it effortlessly."
+    title: "Natural Voice & Text Logging",
+    description: "Simply speak naturally: 'I had two dosas and my usual coffee.' Wellora understands exactly what you mean, figuring out the details and logging it effortlessly."
   },
   {
     icon: <HeartHandshake className="w-6 h-6" />,
-    title: "Empathetic Tone Adaptation",
-    description: "Wellora classifies your emotional tone (stressed, sad, tired, motivated) and adjusts its responses. Programmed with a strict 'no shaming' directive, it acts as a supportive friend."
+    title: "A Supportive Friend",
+    description: "Wellora notices if you're stressed, tired, or motivated and adjusts how it talks to you. It's built with a strict 'no judgment' philosophy."
   },
   {
     icon: <Layers className="w-6 h-6" />,
-    title: "Unified Wellness Hub",
-    description: "Seamlessly processes food, hydration, sleep, and mood logs within the same conversational interface, drawing intelligent connections between your lifestyle choices."
+    title: "Everything in One Place",
+    description: "Keep your food, water, sleep, and mood logs in one simple conversation, helping you connect the dots between your daily habits."
   },
   {
     icon: <Sparkles className="w-6 h-6" />,
-    title: "Hyper-Personalized Insights",
-    description: "Mention a stomach ache, and Wellora instantly cross-references your short-term episodic memory (what you ate today) to provide contextual, actionable advice."
+    title: "Personalized Advice",
+    description: "Mention a stomach ache, and Wellora remembers what you ate earlier today to offer helpful, specific advice."
   }
 ];
 
@@ -35,7 +35,7 @@ export default function WelloraSolutionSection() {
             viewport={{ once: true }}
             className="text-4xl md:text-5xl font-bold mb-6"
           >
-            A Paradigm Shift in <span style={{ color: 'var(--color-accent)' }}>Digital Health</span>
+            A Kinder Way to <span style={{ color: 'var(--color-accent)' }}>Track Your Health</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +45,7 @@ export default function WelloraSolutionSection() {
             className="text-xl"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            By combining advanced natural language processing with deep empathy, Wellora offers highly personalized, non-judgmental support that adapts to your emotional state in real-time.
+            Wellora offers highly personalized, non-judgmental support that actually listens to you and adapts to how you are feeling in the moment.
           </motion.p>
         </div>
 

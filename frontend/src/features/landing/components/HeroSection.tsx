@@ -25,16 +25,16 @@ export default function HeroSection({ onOpenDemo }: HeroSectionProps) {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass border border-[var(--color-border)]" style={{ background: 'rgba(255, 255, 255, 0.03)' }}>
                 <Sparkles className="w-4 h-4" style={{ color: 'var(--color-accent)' }} />
-                <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Aiva AI Receptionist 2.0</span>
+                <span className="text-sm font-medium" style={{ color: 'var(--color-text-secondary)' }}>Aiva 2.0 — Your Business Teammate</span>
               </div>
               
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                Never Miss a <br />
-                <span className="text-gradient">Customer Again.</span>
+                The teammate who never lets a <br />
+                <span className="text-gradient">customer feel ignored.</span>
               </h1>
               
               <p className="text-xl md:text-2xl mb-10 max-w-2xl mx-auto lg:mx-0 font-light" style={{ color: 'var(--color-text-secondary)' }}>
-                Aiva automatically answers calls, handles WhatsApp enquiries, books appointments, and follows up—so you can focus on running your business.
+                Technology should help people do their best work—not replace the people who make your business special.
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">

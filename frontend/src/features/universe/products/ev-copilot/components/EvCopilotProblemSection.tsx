@@ -5,22 +5,22 @@ const problems = [
   {
     icon: <BatteryWarning className="w-8 h-8" />,
     title: "Range Anxiety & Logistics",
-    description: "Planning long trips requires calculating battery depletion, finding compatible charging stations, and hoping they're functioning."
+    description: "Planning long trips means constantly stressing about battery levels, desperately searching for chargers, and hoping they actually work when you get there."
   },
   {
     icon: <Layers className="w-8 h-8" />,
     title: "Fragmented Planning",
-    description: "Drivers juggle Google Maps for routes, PlugShare for chargers, and Yelp for restaurants, causing immense friction."
+    description: "Drivers are forced to juggle Google Maps for directions, PlugShare for chargers, and Yelp for food, making the drive feel like a stressful chore."
   },
   {
     icon: <Brain className="w-8 h-8" />,
-    title: "Cognitive Overload",
-    description: "Adjusting to real-time changes—like unexpected traffic or mountain roads that drain the battery—forces manual recalculation on the fly."
+    title: "Too Much to Think About",
+    description: "Unexpected traffic or mountain roads drain the battery faster than expected, forcing you to nervously recalculate everything on the fly."
   },
   {
     icon: <UserX className="w-8 h-8" />,
     title: "Lack of Personalization",
-    description: "Standard routing apps treat all drivers the same, ignoring dietary needs or personal travel habits when suggesting stops."
+    description: "Standard navigation apps treat all drivers exactly the same, ignoring what you actually like to eat or how you prefer to travel."
   }
 ];
 
@@ -45,7 +45,7 @@ export default function EvCopilotProblemSection() {
             className="text-xl"
             style={{ color: 'var(--color-text-secondary)' }}
           >
-            As EV adoption accelerates, drivers face a unique set of challenges that traditional navigation apps simply fail to address adequately.
+            As more people switch to electric vehicles, drivers are facing a unique set of challenges that traditional navigation apps just aren't built to handle.
           </motion.p>
         </div>
 
