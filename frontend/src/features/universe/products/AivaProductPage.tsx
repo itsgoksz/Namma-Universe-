@@ -17,6 +17,7 @@ import IndustriesSection from '../../landing/components/IndustriesSection';
 import DayWithAivaSection from '../../landing/components/DayWithAivaSection';
 import FeatureShowcase from '../../landing/components/FeatureShowcase';
 import TestimonialsSection from '../../landing/components/TestimonialsSection';
+import AivaPricingSection from '../../landing/components/AivaPricingSection';
 import FinalCTASection from '../../landing/components/FinalCTASection';
 import Footer from '../../landing/components/Footer';
 import DemoModal from '../../landing/components/DemoModal';
@@ -199,6 +200,7 @@ export default function AivaProductPage() {
           <DayWithAivaSection />
           <FeatureShowcase />
           <TestimonialsSection />
+          <AivaPricingSection />
           <FinalCTASection onOpenDemo={() => setIsDemoModalOpen(true)} />
         </main>
 
