@@ -4,7 +4,7 @@ const industries = [
   {
     name: "Salons & Spas",
     description: "Manage bookings for multiple stylists, handle service inquiries, and send appointment reminders automatically.",
-    image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800"
+    image: "/luxury-salon.png"
   },
   {
     name: "Clinics",
@@ -14,12 +14,12 @@ const industries = [
   {
     name: "Gyms & Studios",
     description: "Book trial classes, answer membership questions, and follow up with leads immediately.",
-    image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800"
+    image: "/luxury-gym.png"
   },
   {
     name: "Home Services",
     description: "Capture leads while you're on the job. Aiva takes down requirements and schedules your visits.",
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=800"
+    image: "/luxury-home.png"
   }
 ];
 

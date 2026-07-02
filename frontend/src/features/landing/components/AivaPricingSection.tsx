@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { Check, Leaf, Rocket, Building2 } from 'lucide-react';
 
 const plans = [
   {
     name: 'Starter',
-    icon: '🌱',
+    icon: <Leaf className="w-10 h-10" style={{ color: '#A66B8E' }} />,
     target: 'Perfect for independent businesses',
     price: '₹4,999',
     period: '/ month',
@@ -31,7 +31,7 @@ const plans = [
   },
   {
     name: 'Professional',
-    icon: '🚀',
+    icon: <Rocket className="w-10 h-10" style={{ color: '#A66B8E' }} />,
     target: 'Built for growing businesses',
     price: '₹8,999',
     period: '/ month',
@@ -60,7 +60,7 @@ const plans = [
   },
   {
     name: 'Enterprise',
-    icon: '🏢',
+    icon: <Building2 className="w-10 h-10" style={{ color: '#A66B8E' }} />,
     target: 'For businesses that never want to miss an opportunity',
     price: 'Custom Pricing',
     period: '',
