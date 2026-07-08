@@ -928,18 +928,19 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         
         const euler = new THREE.Euler(rx, ry, rz, 'XYZ');
         pos.applyEuler(euler);
-        
         targetLook.copy(pos);
         targetPos.copy(pos).add(new THREE.Vector3(0, 0.02, 0.4));
       }
 
       // Smoothly interpolate the pan offset to prevent glitchy jumps when opening products
-      const isProductPage = activeProductIndexRef && activeProductIndexRef.current !== null && !sharedState.isZoomingInto;
-      const targetPan = isProductPage ? 0.22 : 0;
+      const isViewingPlanet = activeProductIndexRef && activeProductIndexRef.current !== null;
+      // When zooming into a product, we want to bring the planet to the center!
+      // We rely on the CSS expanding circle for the actual "zoom in" illusion, so we don't move the 3D camera forward.
+      const targetPan = (isViewingPlanet && !sharedState.isZoomingInto) ? 0.22 : 0;
       
       // We can use a property on targetPos to store state if we want, or just lerp a global variable.
       // Let's use sharedState.currentPan to keep track of it across frames smoothly.
-      if (typeof sharedState.currentPan === 'undefined') sharedState.currentPan = sharedState.spawnZoomedIn && isProductPage ? 0.22 : 0;
+      if (typeof sharedState.currentPan === 'undefined') sharedState.currentPan = sharedState.spawnZoomedIn && isViewingPlanet ? 0.22 : 0;
       sharedState.currentPan += (targetPan - sharedState.currentPan) * (1 - Math.exp(-5.0 * delta));
       
       if (sharedState.currentPan > 0.001) {
@@ -954,7 +955,7 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
       smoothLookAt.current.copy(targetLook);
     } else {
       const isTrackingPlanet = activeProductIndexRef && activeProductIndexRef.current !== null;
-      const speed = sharedState.isZoomingInto ? 20.0 : (isTrackingPlanet ? 15.0 : 3.0);
+      const speed = sharedState.isZoomingInto ? 6.0 : (isTrackingPlanet ? 6.0 : 3.0);
       
       const perspectiveCamera = camera as THREE.PerspectiveCamera;
       if (sharedState.isWormhole) {

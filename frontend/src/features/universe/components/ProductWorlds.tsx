@@ -260,7 +260,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
                 setTimeout(() => {
                   sharedState.isZoomingInto = null; // Reset for the new page!
                   navigate(world.route);
-                }, 800);
+                }, 1200);
               } 
             }}
             className={`flex flex-col md:flex-row items-center justify-between text-center md:text-left relative overflow-hidden md:w-[45%] ml-auto`}
@@ -431,7 +431,7 @@ export default function ProductWorlds({ activeProductIndexRef }: { activeProduct
           <motion.div
             initial={{ clipPath: 'circle(0% at 50% 50%)' }}
             animate={{ clipPath: 'circle(150% at 50% 50%)' }}
-            transition={{ duration: 0.8, ease: [0.7, 0, 0.3, 1] }}
+            transition={{ duration: 1.2, ease: [0.7, 0, 0.3, 1] }}
             style={{
               position: 'fixed',
               top: 0, left: 0, right: 0, bottom: 0,
