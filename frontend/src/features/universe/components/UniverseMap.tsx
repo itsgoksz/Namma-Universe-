@@ -66,6 +66,15 @@ const products: Product[] = [
     glowColor: 'rgba(245, 166, 35, 0.25)',
     route: '/products/homie',
   },
+  {
+    id: 'namma-voice',
+    name: 'Namma Voice',
+    emoji: '📢',
+    tagline: 'A real-time, community-driven issue reporting platform for your neighborhood.',
+    color: '#00D4B2',
+    glowColor: 'rgba(0, 212, 178, 0.25)',
+    route: '/products/namma-voice',
+  },
 ];
 
 const containerVariants = {
@@ -131,7 +140,7 @@ export default function UniverseMap() {
             margin: '0 auto',
           }}
         >
-          Five products. Five worlds. One mission.
+          Six products. Six worlds. One mission.
         </p>
       </motion.div>
 

@@ -89,6 +89,18 @@ const worlds: ProductWorld[] = [
     route: '/products/homie',
     available: true,
   },
+  {
+    id: 'namma-voice',
+    name: 'Namma Voice',
+    emoji: '📢',
+    tagline: 'A real-time, community-driven issue reporting platform for your neighborhood.',
+    description: 'Namma Voice bridges the gap between the community and problem-resolution. Spot local issues like potholes or broken streetlights, report them with ease, rally support from neighbors, and track them until they are resolved.',
+    color: '#00D4B2',
+    gradientFrom: 'rgba(0, 212, 178, 0.12)',
+    gradientTo: 'rgba(0, 212, 178, 0.02)',
+    route: '/products/namma-voice',
+    available: true,
+  },
 ];
 
 export default function ProductWorlds({ activeProductIndexRef }: { activeProductIndexRef?: React.MutableRefObject<number | null> }) {

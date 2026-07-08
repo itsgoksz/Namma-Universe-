@@ -23,7 +23,7 @@ const PRODUCT_NODES = [
   { radius: 1.2, startAngle: Math.random() * Math.PI * 2, speed: 0.08, color: [0.44, 0.50, 0.56], size: 1.2 }, // 0: Mercury
   { radius: 1.9, startAngle: Math.random() * Math.PI * 2, speed: 0.05, color: [0.9, 0.2, 0.3], size: 2.5 },  // 1: Venus (Aiva - Pink)
   { radius: 2.7, startAngle: Math.random() * Math.PI * 2, speed: 0.04, color: [0.05, 0.9, 0.1], size: 2.0 },  // 2: Earth (Wellora - Green)
-  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.03, color: [0.88, 0.44, 0.22], size: 1.5 }, // 3: Mars
+  { radius: 3.6, startAngle: Math.random() * Math.PI * 2, speed: 0.03, color: [0.0, 0.8, 0.7], size: 1.5 }, // 3: Mars (Namma Voice - Teal)
   { radius: 5.2, startAngle: Math.random() * Math.PI * 2, speed: 0.015, color: [0.9, 0.5, 0.05], size: 4.0 },  // 4: Jupiter (Homie - Amber)
   { radius: 7.0, startAngle: Math.random() * Math.PI * 2, speed: 0.01, color: [0.93, 0.86, 0.51], size: 4.0 }, // 5: Saturn
   { radius: 8.8, startAngle: Math.random() * Math.PI * 2, speed: 0.008, color: [0.1, 0.0, 1.0], size: 3.0 },  // 6: Uranus (EV Copilot - Purple)
@@ -31,13 +31,15 @@ const PRODUCT_NODES = [
 ];
 
 // Map Product Index (0-4) to Planet Index in PRODUCT_NODES
-const productToPlanetMap = [1, 2, 6, 7, 4];
+const productToPlanetMap = [1, 2, 6, 7, 4, 3];
 
 // Global state for cross-route cinematic transitions
 export const sharedState = {
   entryTilt: Math.PI / 2.5, // Start by looking from high above (top-down view)
   isZoomingInto: null as string | null,
-  spawnZoomedIn: false
+  spawnZoomedIn: false,
+  isWormhole: false,
+  currentPan: 0,
 };
 
 // ─── GLSL Shaders ────────────────────────────────────────────
@@ -49,6 +51,7 @@ const vertexShader = /* glsl */ `
   uniform float uHeight;
   uniform vec3 uRayOrigin;
   uniform vec3 uRayDir;
+  uniform float uWormhole;
 
   attribute vec3 aExpandedPos;
   attribute vec3 aGalaxyPos;
@@ -226,6 +229,44 @@ const vertexShader = /* glsl */ `
     gl_Position  = projectionMatrix * mvPosition;
 
     vColor = aColor;
+
+    // ── WORMHOLE EASTER EGG ──
+    if (uWormhole > 0.0) {
+      // Swirl around Z axis
+      float wormholeSpin = uWormhole * 15.0 * (1.0 - length(pos.xy)/150.0);
+      // 1. Vortex Twist: Spin particles violently around Z-axis
+      float twist = uWormhole * 40.0; 
+      float s = sin(twist);
+      float c = cos(twist);
+      pos.xy = vec2(pos.x * c - pos.y * s, pos.x * s + pos.y * c);
+      
+      // 2. Hyperspace Tunnel Collapse
+      // Compress the entire universe into a long, fast-moving cylinder
+      float originalRadius = length(pos.xy);
+      float tunnelRadius = max(originalRadius * 0.05, 5.0 + sin(pos.z * 0.05) * 2.0);
+      vec2 tunnelDir = originalRadius > 0.0 ? (pos.xy / originalRadius) : vec2(1.0, 0.0);
+      
+      vec3 tunnelPos = pos;
+      tunnelPos.xy = tunnelDir * tunnelRadius; // Form walls of the tunnel
+      tunnelPos.z -= uWormhole * 1000.0; // Blast incredibly fast past the camera
+      
+      // Smoothly blend into the tunnel shape
+      pos = mix(pos, tunnelPos, pow(uWormhole, 1.2));
+      
+      // Recalculate position
+      mvPosition = modelViewMatrix * vec4(pos, 1.0);
+      gl_Position = projectionMatrix * mvPosition;
+      
+      // 3. Neural Colors
+      float colorMix = sin(uTime * 15.0 + aPhase * 20.0) * 0.5 + 0.5;
+      vec3 wormholeColor = mix(vec3(0.0, 1.0, 1.0), vec3(0.6, 0.0, 1.0), colorMix); // Cyan to Purple
+      
+      // Exponential brightness as they get sucked in
+      vColor = mix(vColor, wormholeColor * (2.0 + uWormhole * 8.0), uWormhole);
+      
+      // Spaghettification / Stretching effect
+      gl_PointSize *= (1.0 + uWormhole * 20.0);
+    }
 
     // Alpha handling: start partially visible (0.4) so the singularity is seen on load
     vAlpha = mix(0.4, 1.0, fadeIn);
@@ -478,6 +519,7 @@ function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesPr
     uHeight:     { value: window.innerHeight },
     uRayOrigin:  { value: new THREE.Vector3() },
     uRayDir:     { value: new THREE.Vector3() },
+    uWormhole:   { value: 0 },
   }), []);
 
   // Animation loop
@@ -488,6 +530,9 @@ function Particles({ progressRef, mouseRef, activeProductIndexRef }: ParticlesPr
       materialRef.current.uniforms.uProgress.value = smoothProgress.current;
       materialRef.current.uniforms.uTime.value = clock.elapsedTime;
       materialRef.current.uniforms.uHeight.value = window.innerHeight;
+      
+      const targetWormhole = sharedState.isWormhole ? 1.0 : 0.0;
+      materialRef.current.uniforms.uWormhole.value += (targetWormhole - materialRef.current.uniforms.uWormhole.value) * (1 - Math.exp(-2 * delta));
       
       // Calculate mouse with a bit more smoothing for the gravity feel
       smoothMouse.current.x += (mouseRef.current.x - smoothMouse.current.x) * (1 - Math.exp(-4 * delta));
@@ -876,7 +921,6 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         );
         
         const pos = new THREE.Vector3().lerpVectors(pos0, pos1, t);
-        
         const extraScrollRot = Math.max(0, (scrollY / vh) - 4.0);
         const rx = -smoothMouse.current.y * 0.15 + (extraScrollRot * 0.02) + sharedState.entryTilt;
         const ry = smoothMouse.current.x * 0.15 + (extraScrollRot * 0.05);
@@ -889,28 +933,59 @@ function CameraController({ progressRef, activeProductIndexRef, mouseRef }: Came
         targetPos.copy(pos).add(new THREE.Vector3(0, 0.02, 0.4));
       }
 
-      if (activeProductIndexRef && activeProductIndexRef.current !== null) {
-        const panOffset = new THREE.Vector3(0.22, 0, 0);
+      // Smoothly interpolate the pan offset to prevent glitchy jumps when opening products
+      const isProductPage = activeProductIndexRef && activeProductIndexRef.current !== null && !sharedState.isZoomingInto;
+      const targetPan = isProductPage ? 0.22 : 0;
+      
+      // We can use a property on targetPos to store state if we want, or just lerp a global variable.
+      // Let's use sharedState.currentPan to keep track of it across frames smoothly.
+      if (typeof sharedState.currentPan === 'undefined') sharedState.currentPan = sharedState.spawnZoomedIn && isProductPage ? 0.22 : 0;
+      sharedState.currentPan += (targetPan - sharedState.currentPan) * (1 - Math.exp(-5.0 * delta));
+      
+      if (sharedState.currentPan > 0.001) {
+        const panOffset = new THREE.Vector3(sharedState.currentPan, 0, 0);
         targetLook.add(panOffset);
         targetPos.add(panOffset);
       }
     }
 
     if (isFirstFrame.current && sharedState.spawnZoomedIn) {
-      // Instantly snap to position if we just arrived from a cinematic warp
       smoothTarget.current.copy(targetPos);
       smoothLookAt.current.copy(targetLook);
     } else {
-      // Smoothly interpolate camera. Use high speed when tracking a planet to prevent lag/drift!
       const isTrackingPlanet = activeProductIndexRef && activeProductIndexRef.current !== null;
       const speed = sharedState.isZoomingInto ? 20.0 : (isTrackingPlanet ? 15.0 : 3.0);
-      smoothTarget.current.lerp(targetPos, 1 - Math.exp(-speed * delta));
-      smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-(speed + 1.0) * delta));
+      
+      const perspectiveCamera = camera as THREE.PerspectiveCamera;
+      if (sharedState.isWormhole) {
+        perspectiveCamera.fov += (160 - perspectiveCamera.fov) * (1 - Math.exp(-2.5 * delta));
+        perspectiveCamera.updateProjectionMatrix();
+        
+        // Smooth sine-based shake instead of jittery random
+        const time = Date.now() * 0.05;
+        perspectiveCamera.rotation.z += Math.sin(time * 0.5) * 0.1;
+        targetPos.x += Math.sin(time) * 1.5;
+        targetPos.y += Math.cos(time * 0.8) * 1.5;
+        
+        smoothTarget.current.lerp(targetPos, 1 - Math.exp(-10.0 * delta));
+        smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-10.0 * delta));
+      } else {
+        if (perspectiveCamera.fov !== 65) {
+          perspectiveCamera.fov = 65;
+          perspectiveCamera.updateProjectionMatrix();
+          perspectiveCamera.rotation.z = 0;
+        }
+        smoothTarget.current.lerp(targetPos, 1 - Math.exp(-speed * delta));
+        smoothLookAt.current.lerp(targetLook, 1 - Math.exp(-(speed + 1.0) * delta));
+      }
     }
+    
     isFirstFrame.current = false;
 
     camera.position.copy(smoothTarget.current);
-    camera.lookAt(smoothLookAt.current);
+    if (!sharedState.isWormhole) {
+      camera.lookAt(smoothLookAt.current);
+    }
   });
 
   return null;
@@ -998,6 +1073,7 @@ interface ParticleFieldProps {
 
 export default function ParticleField({ progressRef, activeProductIndexRef, className }: ParticleFieldProps) {
   const mouseRef = useRef({ x: 0, y: 0 });
+  const [wormholeActive, setWormholeActive] = useState(false);
 
   // Track mouse and touch for parallax and gravity effects
   useEffect(() => {
@@ -1021,9 +1097,32 @@ export default function ParticleField({ progressRef, activeProductIndexRef, clas
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     
+    // ── KONAMI CODE EASTER EGG ──
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiIndex = 0;
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === konamiCode[konamiIndex] || e.key.toLowerCase() === konamiCode[konamiIndex].toLowerCase()) {
+        konamiIndex++;
+        if (konamiIndex === konamiCode.length) {
+          sharedState.isWormhole = true;
+          setWormholeActive(true);
+          // Redirect after 2.5s of crazy wormhole animation
+          setTimeout(() => {
+            window.location.href = 'https://bigbrainenergy.xyz';
+          }, 2500);
+          konamiIndex = 0;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -1037,6 +1136,51 @@ export default function ParticleField({ progressRef, activeProductIndexRef, clas
           background: 'radial-gradient(ellipse at center, transparent 10%, rgba(5, 6, 10, 0.8) 100%)',
           zIndex: 1,
           pointerEvents: 'none'
+        }}
+      />
+      
+      {/* ── BIG BRAIN ENERGY OVERLAY ── */}
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          zIndex: 10,
+          pointerEvents: 'none',
+          opacity: wormholeActive ? 1 : 0,
+          transition: 'opacity 0.3s ease-in',
+          background: 'radial-gradient(circle at center, rgba(0, 255, 255, 0.15) 0%, transparent 60%)'
+        }}
+      >
+        <h1 
+          className="text-5xl md:text-8xl font-black text-white uppercase text-center"
+          style={{ 
+            textShadow: '0 0 30px rgba(0,255,255,0.8), 0 0 60px rgba(157,0,255,0.6)',
+            letterSpacing: '-0.05em'
+          }}
+        >
+          Games That <br />
+          Rewire Your Brain.
+        </h1>
+        <p className="mt-6 text-[0.85rem] font-bold tracking-[0.3em] uppercase" style={{ color: '#00FFFF', textShadow: '0 0 10px rgba(0,255,255,0.8)' }}>
+          Neural Override Initiated...
+        </p>
+      </div>
+      
+      {/* ── WHITE FLASH OVERLAY (END OF WORMHOLE) ── */}
+      <div 
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: '#00FFFF',
+          zIndex: 20,
+          pointerEvents: 'none',
+          opacity: wormholeActive ? 1 : 0,
+          transition: 'opacity 0.8s cubic-bezier(1, 0, 1, 1)',
+          transitionDelay: '1.8s' // Flash happens exactly at the end of the 2.5s timer
         }}
       />
       
